@@ -49,6 +49,7 @@ export function createTemplateTag(settings: OpenAiCompletionAgentSettings) {
 
         for (let i = 1, l = templateStrings.length; i < l; i++) {
             let val = await (values[i - 1] || "");
+
             content += val || "";
             content += templateStrings[i] || "";
 

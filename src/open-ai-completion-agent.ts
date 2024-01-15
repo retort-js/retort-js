@@ -1,4 +1,4 @@
-import { RtMessage, createTemplateTag, isTemplateStringsArray } from "./rt-message";
+import { RtMessage, RtTagTemplateValue, createTemplateTag, isTemplateStringsArray } from "./rt-message";
 
 export class OpenAiCompletionAgent {
   settings: OpenAiCompletionAgentSettings;
@@ -16,7 +16,7 @@ export class OpenAiCompletionAgent {
   }
 
   message(content: string): Promise<RtMessage>;
-  message(templateStrings: TemplateStringsArray, ...values: any[]): Promise<RtMessage>;
+  message(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage>;
   message(content: Partial<OpenAiCompletionAgentSettings> & Content): Promise<RtMessage>;
 
 
