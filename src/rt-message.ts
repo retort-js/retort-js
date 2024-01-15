@@ -11,15 +11,15 @@ export class RtMessage {
 
 }
 
-type RtTagTemplateValue = string | number | boolean | undefined | null | RtMessage;
-
+export type RtTagTemplateValueBase = string | number | boolean | undefined | null | RtMessage;
+export type RtTagTemplateValue = RtTagTemplateValueBase | Promise<RtTagTemplateValueBase>;
 
 
 
 export function createTemplateTag(settings: OpenAiCompletionAgentSettings) {
 
 
-    return async function templateTag(templateStrings: TemplateStringsArray, ...values: (RtTagTemplateValue | Promise<RtTagTemplateValue>)[]): Promise<RtMessage> {
+    return async function templateTag(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage> {
 
         // Get the strings in raw form.
         let strings = templateStrings.raw.map(x => x);

@@ -3,7 +3,7 @@ import { RtMessage, createTemplateTag, isTemplateStringsArray } from "./rt-messa
 export class OpenAiCompletionAgent {
   settings: OpenAiCompletionAgentSettings;
 
-  constructor(settings?: OpenAiCompletionAgentSettings) {
+  constructor(settings?: Partial<OpenAiCompletionAgentSettings>) {
     this.settings = {
       model: "gpt-3.5-turbo",
       role: "user",
@@ -15,22 +15,27 @@ export class OpenAiCompletionAgent {
     }
   }
 
-  get message(): MessageMethod {
-    return (...values: Parameters<MessageMethod>) => {
-      if (typeof values[0] === "string") {
-        return messageFromStringGenerator(this.settings)(values[0]);
-      }
-      else if (isTemplateStringsArray(values[0])) {
-        return messageFromTemplateGenerator(this.settings)(values[0], ...values.slice(1) as any[]);
-      }
-      else if (typeof values[0] === "object") {
-        return messageFromObjectGenerator(this.settings)(values[0]);
-      }
-      else {
-        throw new Error("Invalid message type.");
-      }
+  message(content: string): Promise<RtMessage>;
+  message(templateStrings: TemplateStringsArray, ...values: any[]): Promise<RtMessage>;
+  message(content: Partial<OpenAiCompletionAgentSettings> & Content): Promise<RtMessage>;
 
-    };
+
+  message(value0: string | (Partial<OpenAiCompletionAgentSettings> & Content) | TemplateStringsArray, ...values: any[]): Promise<RtMessage> {
+    if (typeof value0 === "string") {
+      let result = messageFromStringGenerator(this.settings)(value0);
+      return result;
+    }
+    else if (isTemplateStringsArray(value0)) {
+      return messageFromTemplateGenerator(this.settings)(value0, ...values);
+    }
+    else if (typeof value0 === "object") {
+      return messageFromObjectGenerator(this.settings)({ ...value0 });
+    }
+    else {
+      throw new Error("Invalid message type.");
+    }
+
+
   }
 }
 
@@ -39,10 +44,12 @@ export interface OpenAiCompletionAgentSettings {
   role: "user" | "assistant" | "system" | string;
 }
 
-type MessageMethod =
-  ReturnType<typeof messageFromStringGenerator> |
-  ReturnType<typeof messageFromTemplateGenerator> |
-  ReturnType<typeof messageFromObjectGenerator>;
+type MessageFromString = ReturnType<typeof messageFromStringGenerator>;
+type MessageFromTemplate = ReturnType<typeof messageFromTemplateGenerator>;
+type MessageFromObject = ReturnType<typeof messageFromObjectGenerator>;
+
+type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject;
+
 
 function messageFromStringGenerator(settings: OpenAiCompletionAgentSettings) {
   return async function messageFromString(content: string): Promise<RtMessage> {
@@ -56,7 +63,7 @@ function messageFromTemplateGenerator(settings: OpenAiCompletionAgentSettings) {
 type Content = { content: string }
 
 function messageFromObjectGenerator(settings: OpenAiCompletionAgentSettings) {
-  return async function messageFromObject(settings2: OpenAiCompletionAgentSettings & Content): Promise<RtMessage> {
+  return async function messageFromObject(settings2: Partial<OpenAiCompletionAgentSettings> & Content): Promise<RtMessage> {
     return new RtMessage({ ...settings, ...settings2 });
   }
 }
