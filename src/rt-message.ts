@@ -1,4 +1,4 @@
-import { OpenAiCompletionAgentSettings } from "./open-ai-completion-agent";
+import { Configuration } from "./open-ai-completion-agent";
 
 export class RtMessage {
     role: "user" | "assistant" | "system" | string = "user";
@@ -16,7 +16,7 @@ export type RtTagTemplateValue = RtTagTemplateValueBase | Promise<RtTagTemplateV
 
 
 
-export function createTemplateTag(settings: OpenAiCompletionAgentSettings) {
+export function createTemplateTag(settings: Configuration) {
 
 
     return async function templateTag(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage> {

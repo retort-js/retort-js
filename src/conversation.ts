@@ -1,11 +1,11 @@
-import { OpenAiCompletionAgent } from "./open-ai-completion-agent";
+import { Agent } from "./open-ai-completion-agent";
 
 export class Conversation {
 
     chat = this;
-    user = new OpenAiCompletionAgent({ role: "user" });
-    assistant = new OpenAiCompletionAgent({ role: "assistant" });
-    system = new OpenAiCompletionAgent({ role: "system" });
+    user = new Agent({ role: "user", action: "input" });
+    assistant = new Agent({ role: "assistant", action: "generation" });
+    system = new Agent({ role: "system", action: null });
 
 
 }

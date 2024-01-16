@@ -1,5 +1,5 @@
-import { OpenAiCompletionAgent } from "./open-ai-completion-agent";
+import { Agent } from "./open-ai-completion-agent";
 
-let user = new OpenAiCompletionAgent({ role: "user" });
+let user = new Agent({ role: "user" });
 
 user.message`Hello, I'm a user.${{}}`

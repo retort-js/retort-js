@@ -1,12 +1,14 @@
 import { RtMessage, RtTagTemplateValue, createTemplateTag, isTemplateStringsArray } from "./rt-message";
 
-export class OpenAiCompletionAgent {
-  settings: OpenAiCompletionAgentSettings;
+export class Agent {
+  settings: Configuration;
 
-  constructor(settings?: Partial<OpenAiCompletionAgentSettings>) {
+  constructor(settings?: Partial<Configuration>) {
     this.settings = {
       model: "gpt-3.5-turbo",
       role: "user",
+      provider: "openai",
+      action: "generation",
     };
 
 
@@ -17,10 +19,10 @@ export class OpenAiCompletionAgent {
 
   message(content: string): Promise<RtMessage>;
   message(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage>;
-  message(content: Partial<OpenAiCompletionAgentSettings> & Content): Promise<RtMessage>;
+  message(content: Partial<Configuration> & Content): Promise<RtMessage>;
 
 
-  message(value0: string | (Partial<OpenAiCompletionAgentSettings> & Content) | TemplateStringsArray, ...values: any[]): Promise<RtMessage> {
+  message(value0: string | (Partial<Configuration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RtMessage> {
     if (typeof value0 === "string") {
       let result = messageFromStringGenerator(this.settings)(value0);
       return result;
@@ -39,9 +41,17 @@ export class OpenAiCompletionAgent {
   }
 }
 
-export interface OpenAiCompletionAgentSettings {
+export type Action = "input" | "generation" | "answer";
+
+export type Role = "user" | "assistant" | "system";
+
+export type Provider = "openai";
+
+export interface Configuration {
   model: string;
-  role: "user" | "assistant" | "system" | string;
+  role: Role;
+  provider: Provider;
+  action: Action | null;
 }
 
 type MessageFromString = ReturnType<typeof messageFromStringGenerator>;
@@ -51,19 +61,20 @@ type MessageFromObject = ReturnType<typeof messageFromObjectGenerator>;
 type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject;
 
 
-function messageFromStringGenerator(settings: OpenAiCompletionAgentSettings) {
+function messageFromStringGenerator(settings: Configuration) {
   return async function messageFromString(content: string): Promise<RtMessage> {
     return new RtMessage({ ...settings, content: content });
   }
 }
-function messageFromTemplateGenerator(settings: OpenAiCompletionAgentSettings) {
+function messageFromTemplateGenerator(settings: Configuration) {
   return createTemplateTag(settings);
 }
 
 type Content = { content: string }
 
-function messageFromObjectGenerator(settings: OpenAiCompletionAgentSettings) {
-  return async function messageFromObject(settings2: Partial<OpenAiCompletionAgentSettings> & Content): Promise<RtMessage> {
+function messageFromObjectGenerator(settings: Configuration) {
+  return async function messageFromObject(settings2: Partial<Configuration> & Content): Promise<RtMessage> {
     return new RtMessage({ ...settings, ...settings2 });
   }
 }
+
