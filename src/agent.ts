@@ -1,11 +1,19 @@
 import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
-interface Agent {
-  settings: RetortConfiguration;
+interface AgentFunction {
+  (content: string): Promise<Message>;
+  (templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message;
+  (content: Partial<RetortConfiguration> & Content): Promise<Message>;
+}
 
-  message(content: string): Promise<Message>;
-  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message;
-  message(content: Partial<RetortConfiguration> & Content): Promise<Message>;
+interface AgentMembers {
+  settings: RetortConfiguration;
+}
+
+interface Agent extends AgentFunction, AgentMembers {
+
+
+
 
 
 
@@ -25,31 +33,36 @@ export function agent(inputSettings: Partial<RetortConfiguration>): Agent {
     settings = { ...settings, ...inputSettings };
   }
 
-  let agent: Agent = {
+  let agentFunction: AgentFunction = ((value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: RetortValue[]) => {
+    if (typeof value0 === "string") {
+      let result = messageFromStringGenerator(settings)(value0);
+      return result;
+    }
+    else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
+      return messageFromTemplateGenerator(settings)(value0, ...values);
+    }
+    else if (typeof value0 === "object") {
+      return messageFromObjectGenerator(settings)({ ...value0 });
+    }
+    else {
+      throw new Error("Invalid message type.");
+    }
+
+
+  }) as AgentFunction;
+
+  let agentMembers: AgentMembers = {
     settings: settings,
+  };
 
-    message: ((value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]) => {
-      if (typeof value0 === "string") {
-        let result = messageFromStringGenerator(settings)(value0);
-        return result;
-      }
-      else if (isTemplateStringsArray(value0)) {
-        return messageFromTemplateGenerator(settings)(value0, ...values);
-      }
-      else if (typeof value0 === "object") {
-        return messageFromObjectGenerator(settings)({ ...value0 });
-      }
-      else {
-        throw new Error("Invalid message type.");
-      }
+  let agent = agentFunction as Agent;
 
-
-    }) as any,
+  for (let key in Object.keys(agentMembers)) {
+    let k = key as keyof AgentMembers;
+    agent[k] = agentMembers[k];
   }
 
-
-
-  throw new Error("Not implemented.");
+  return agent;
 }
 
 
