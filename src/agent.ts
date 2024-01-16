@@ -1,9 +1,9 @@
 import { RetortMessage, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 export class Agent {
-  settings: Configuration;
+  settings: RetortConfiguration;
 
-  constructor(settings?: Partial<Configuration>) {
+  constructor(settings?: Partial<RetortConfiguration>) {
     this.settings = {
       model: "gpt-3.5-turbo",
       role: "user",
@@ -19,10 +19,10 @@ export class Agent {
 
   message(content: string): Promise<RetortMessage>;
   message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Promise<RetortMessage>;
-  message(content: Partial<Configuration> & Content): Promise<RetortMessage>;
+  message(content: Partial<RetortConfiguration> & Content): Promise<RetortMessage>;
 
 
-  message(value0: string | (Partial<Configuration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RetortMessage> {
+  message(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RetortMessage> {
     if (typeof value0 === "string") {
       let result = messageFromStringGenerator(this.settings)(value0);
       return result;
@@ -41,17 +41,17 @@ export class Agent {
   }
 }
 
-export type Action = "input" | "generation" | "answer";
+export type RetortAction = "input" | "generation" | "answer";
 
-export type Role = "user" | "assistant" | "system";
+export type RetortRole = "user" | "assistant" | "system";
 
-export type Provider = "openai";
+export type RetortProvider = "openai";
 
-export interface Configuration {
+export interface RetortConfiguration {
   model: string;
-  role: Role;
-  provider: Provider;
-  action: Action | null;
+  role: RetortRole;
+  provider: RetortProvider;
+  action: RetortAction | null;
 }
 
 type MessageFromString = ReturnType<typeof messageFromStringGenerator>;
@@ -61,19 +61,19 @@ type MessageFromObject = ReturnType<typeof messageFromObjectGenerator>;
 type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject;
 
 
-function messageFromStringGenerator(settings: Configuration) {
+function messageFromStringGenerator(settings: RetortConfiguration) {
   return async function messageFromString(content: string): Promise<RetortMessage> {
     return new RetortMessage({ ...settings, content: content });
   }
 }
-function messageFromTemplateGenerator(settings: Configuration) {
+function messageFromTemplateGenerator(settings: RetortConfiguration) {
   return createTemplateTag(settings);
 }
 
 type Content = { content: string }
 
-function messageFromObjectGenerator(settings: Configuration) {
-  return async function messageFromObject(settings2: Partial<Configuration> & Content): Promise<RetortMessage> {
+function messageFromObjectGenerator(settings: RetortConfiguration) {
+  return async function messageFromObject(settings2: Partial<RetortConfiguration> & Content): Promise<RetortMessage> {
     return new RetortMessage({ ...settings, ...settings2 });
   }
 }

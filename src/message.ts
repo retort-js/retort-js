@@ -1,10 +1,10 @@
-import { Configuration, Role } from "./agent";
+import { RetortConfiguration, RetortRole } from "./agent";
 
 export class RetortMessage {
-    role: Role;
+    role: RetortRole;
     content = "";
 
-    constructor({ role, content }: { role: Role, content: string }) {
+    constructor({ role, content }: { role: RetortRole, content: string }) {
         this.role = role;
         this.content = content;
     }
@@ -15,7 +15,7 @@ export type RetortValue = string | number | boolean | undefined | null | RetortM
 
 
 
-export function createTemplateTag(settings: Configuration) {
+export function createTemplateTag(settings: RetortConfiguration) {
 
 
     return function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage {
