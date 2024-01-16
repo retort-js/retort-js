@@ -1,3 +1,4 @@
+import { Conversation } from "./conversation";
 import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 interface AgentFunction {
@@ -7,19 +8,15 @@ interface AgentFunction {
 }
 
 interface AgentMembers {
+  conversation: Conversation;
   settings: RetortConfiguration;
 }
 
 interface Agent extends AgentFunction, AgentMembers {
 
-
-
-
-
-
 }
 
-export function agent(inputSettings: Partial<RetortConfiguration>): Agent {
+export function agent(conversation: Conversation, inputSettings: Partial<RetortConfiguration>): Agent {
 
   let settings: RetortConfiguration = {
     model: "gpt-3.5-turbo",
@@ -52,14 +49,20 @@ export function agent(inputSettings: Partial<RetortConfiguration>): Agent {
   }) as AgentFunction;
 
   let agentMembers: AgentMembers = {
+    conversation: conversation,
     settings: settings,
   };
 
   let agent = agentFunction as Agent;
 
   for (let key in Object.keys(agentMembers)) {
-    let k = key as keyof AgentMembers;
-    agent[k] = agentMembers[k];
+    // Define them as readonly properties
+    Object.defineProperty(agent, key, {
+      value: agentMembers[key as keyof AgentMembers],
+      writable: false,
+      enumerable: true,
+      configurable: false
+    });
   }
 
   return agent;
