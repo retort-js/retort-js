@@ -1,4 +1,4 @@
-import { Message, RtTagTemplateValue, createTemplateTag, isTemplateStringsArray } from "./message";
+import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 export class Agent {
   settings: Configuration;
@@ -18,7 +18,7 @@ export class Agent {
   }
 
   message(content: string): Promise<Message>;
-  message(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<Message>;
+  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Promise<Message>;
   message(content: Partial<Configuration> & Content): Promise<Message>;
 
 

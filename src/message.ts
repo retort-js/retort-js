@@ -11,15 +11,14 @@ export class Message {
 
 }
 
-export type RtTagTemplateValueBase = string | number | boolean | undefined | null | Message;
-export type RtTagTemplateValue = RtTagTemplateValueBase | Promise<RtTagTemplateValueBase>;
+export type RetortValue = string | number | boolean | undefined | null | Message;
 
 
 
 export function createTemplateTag(settings: Configuration) {
 
 
-    return async function templateTag(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<Message> {
+    return async function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Promise<Message> {
 
         // Get the strings in raw form.
         let strings = templateStrings.raw.map(x => x);
