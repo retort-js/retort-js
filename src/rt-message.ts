@@ -1,4 +1,4 @@
-import { Configuration } from "./open-ai-completion-agent";
+import { Configuration } from "./agent";
 
 export class RtMessage {
     role: "user" | "assistant" | "system" | string = "user";

@@ -1,4 +1,4 @@
-import { Agent } from "./open-ai-completion-agent";
+import { Agent } from "./agent";
 
 let user = new Agent({ role: "user" });
 
