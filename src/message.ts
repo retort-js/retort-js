@@ -1,10 +1,10 @@
-import { Configuration } from "./agent";
+import { Configuration, Role } from "./agent";
 
 export class RetortMessage {
-    role: "user" | "assistant" | "system" | string = "user";
+    role: Role;
     content = "";
 
-    constructor({ role, content }: { role: string, content: string }) {
+    constructor({ role, content }: { role: Role, content: string }) {
         this.role = role;
         this.content = content;
     }
