@@ -18,11 +18,11 @@ export class Agent {
   }
 
   message(content: string): Promise<RetortMessage>;
-  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Promise<RetortMessage>;
+  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
   message(content: Partial<RetortConfiguration> & Content): Promise<RetortMessage>;
 
 
-  message(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RetortMessage> {
+  message(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RetortMessage> | RetortMessage {
     if (typeof value0 === "string") {
       let result = messageFromStringGenerator(this.settings)(value0);
       return result;
