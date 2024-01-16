@@ -11,14 +11,14 @@ export class Message {
 
 }
 
-export type Value = string | number | boolean | undefined | null | Message;
+export type RetortValue = string | number | boolean | undefined | null | Message;
 
 
 
 export function createTemplateTag(settings: Configuration) {
 
 
-    return async function templateTag(templateStrings: TemplateStringsArray, ...values: Value[]): Promise<Message> {
+    return function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message {
 
         // Get the strings in raw form.
         let strings = templateStrings.raw.map(x => x);
@@ -47,7 +47,7 @@ export function createTemplateTag(settings: Configuration) {
         let content = strings[0] || "";
 
         for (let i = 1, l = templateStrings.length; i < l; i++) {
-            let val = await (values[i - 1] || "");
+            let val = (values[i - 1] || "");
 
             content += val || "";
             content += templateStrings[i] || "";
