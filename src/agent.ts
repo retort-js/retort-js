@@ -1,4 +1,4 @@
-import { RetortMessage, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
+import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 export class Agent {
   settings: RetortConfiguration;
@@ -17,12 +17,12 @@ export class Agent {
     }
   }
 
-  message(content: string): Promise<RetortMessage>;
-  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
-  message(content: Partial<RetortConfiguration> & Content): Promise<RetortMessage>;
+  message(content: string): Promise<Message>;
+  message(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message;
+  message(content: Partial<RetortConfiguration> & Content): Promise<Message>;
 
 
-  message(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RetortMessage> | RetortMessage {
+  message(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: any[]): Promise<Message> | Message {
     if (typeof value0 === "string") {
       let result = messageFromStringGenerator(this.settings)(value0);
       return result;
@@ -62,8 +62,8 @@ type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject
 
 
 function messageFromStringGenerator(settings: RetortConfiguration) {
-  return async function messageFromString(content: string): Promise<RetortMessage> {
-    return new RetortMessage({ ...settings, content: content });
+  return async function messageFromString(content: string): Promise<Message> {
+    return new Message({ ...settings, content: content });
   }
 }
 function messageFromTemplateGenerator(settings: RetortConfiguration) {
@@ -73,8 +73,8 @@ function messageFromTemplateGenerator(settings: RetortConfiguration) {
 type Content = { content: string }
 
 function messageFromObjectGenerator(settings: RetortConfiguration) {
-  return async function messageFromObject(settings2: Partial<RetortConfiguration> & Content): Promise<RetortMessage> {
-    return new RetortMessage({ ...settings, ...settings2 });
+  return async function messageFromObject(settings2: Partial<RetortConfiguration> & Content): Promise<Message> {
+    return new Message({ ...settings, ...settings2 });
   }
 }
 

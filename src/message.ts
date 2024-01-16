@@ -1,6 +1,6 @@
 import { RetortConfiguration, RetortRole } from "./agent";
 
-export class RetortMessage {
+export class Message {
     role: RetortRole;
     content = "";
 
@@ -11,14 +11,14 @@ export class RetortMessage {
 
 }
 
-export type RetortValue = string | number | boolean | undefined | null | RetortMessage;
+export type RetortValue = string | number | boolean | undefined | null | Message;
 
 
 
 export function createTemplateTag(settings: RetortConfiguration) {
 
 
-    return function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage {
+    return function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message {
 
         // Get the strings in raw form.
         let strings = templateStrings.raw.map(x => x);
@@ -54,7 +54,7 @@ export function createTemplateTag(settings: RetortConfiguration) {
 
         }
 
-        return new RetortMessage({ ...settings, content });
+        return new Message({ ...settings, content });
     }
 }
 
