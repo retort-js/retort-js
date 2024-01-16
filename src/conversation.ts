@@ -1,11 +1,13 @@
-import { Agent } from "./agent";
+import { agent } from "./agent";
+import { Message } from "./message";
 
 export class Conversation {
 
-    conversation = this;
-    user = new Agent({ role: "user", action: "input" });
-    assistant = new Agent({ role: "assistant", action: "generation" });
-    system = new Agent({ role: "system", action: null });
+    readonly conversation = this;
+    readonly messages: Message[] = [];
+    user = agent({ role: "user", action: "input" });
+    assistant = agent({ role: "assistant", action: "generation" });
+    system = agent({ role: "system", action: null });
 
 
 }

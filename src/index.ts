@@ -1,7 +1,7 @@
-import { Agent } from "./agent";
+import { Conversation } from "./conversation";
 
-let user = new Agent({ role: "user" });
+let {user, assistant, system} = new Conversation();
 
-user `Hello, I'm a user.${{}}`
+user `Hello, I'm a user.${true}`
 
-await assistant();
+assistant `Great!`
