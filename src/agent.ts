@@ -2,9 +2,17 @@ import { Conversation } from "./conversation";
 import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 interface AgentFunction {
-  (content: string): Promise<Message>;
+
+  // assistant ("Hello")
+  (content: string): Message;
+
+  // assistant `Hello`
   (templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message;
-  (content: Partial<RetortConfiguration> & Content): Promise<Message>;
+
+  // assistant() 
+  // or 
+  // assistant({model: "gpt-5"})
+  (settings?: Partial<RetortConfiguration>): Promise<Message>;
 }
 
 interface AgentMembers {
@@ -32,14 +40,17 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
 
   let agentFunction: AgentFunction = ((value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: RetortValue[]) => {
     if (typeof value0 === "string") {
-      let result = messageFromStringGenerator(settings)(value0);
-      return result;
+      let message = messageFromStringGenerator(settings)(value0);
+      conversation.messages.push(message);
+      return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
-      return messageFromTemplateGenerator(settings)(value0, ...values);
+      let message = messageFromTemplateGenerator(settings)(value0, ...values);
+      conversation.messages.push(message);
+      return message;
     }
-    else if (typeof value0 === "object") {
-      return messageFromObjectGenerator(settings)({ ...value0 });
+    else if (!value0 || typeof value0 === "object") {
+      return messageFromActionGenerator(settings)({ ...(value0 || {}) });
     }
     else {
       throw new Error("Invalid message type.");
@@ -84,13 +95,13 @@ export interface RetortConfiguration {
 
 type MessageFromString = ReturnType<typeof messageFromStringGenerator>;
 type MessageFromTemplate = ReturnType<typeof messageFromTemplateGenerator>;
-type MessageFromObject = ReturnType<typeof messageFromObjectGenerator>;
+type MessageFromObject = ReturnType<typeof messageFromActionGenerator>;
 
 type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject;
 
 
 function messageFromStringGenerator(settings: RetortConfiguration) {
-  return async function messageFromString(content: string): Promise<Message> {
+  return function messageFromString(content: string): Message {
     return new Message({ ...settings, content: content });
   }
 }
@@ -100,9 +111,10 @@ function messageFromTemplateGenerator(settings: RetortConfiguration) {
 
 type Content = { content: string }
 
-function messageFromObjectGenerator(settings: RetortConfiguration) {
-  return async function messageFromObject(settings2: Partial<RetortConfiguration> & Content): Promise<Message> {
-    return new Message({ ...settings, ...settings2 });
+function messageFromActionGenerator(settings: RetortConfiguration) {
+  return async function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<Message> {
+    let settings3 = { ...settings, ...settings2 };
+    return new Message({ role: settings3.role || "user", content: "test reaction from " + settings3.role });
   }
 }
 
