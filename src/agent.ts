@@ -1,4 +1,4 @@
-import { RtMessage, RtTagTemplateValue, createTemplateTag, isTemplateStringsArray } from "./rt-message";
+import { Message, RtTagTemplateValue, createTemplateTag, isTemplateStringsArray } from "./message";
 
 export class Agent {
   settings: Configuration;
@@ -17,12 +17,12 @@ export class Agent {
     }
   }
 
-  message(content: string): Promise<RtMessage>;
-  message(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage>;
-  message(content: Partial<Configuration> & Content): Promise<RtMessage>;
+  message(content: string): Promise<Message>;
+  message(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<Message>;
+  message(content: Partial<Configuration> & Content): Promise<Message>;
 
 
-  message(value0: string | (Partial<Configuration> & Content) | TemplateStringsArray, ...values: any[]): Promise<RtMessage> {
+  message(value0: string | (Partial<Configuration> & Content) | TemplateStringsArray, ...values: any[]): Promise<Message> {
     if (typeof value0 === "string") {
       let result = messageFromStringGenerator(this.settings)(value0);
       return result;
@@ -62,8 +62,8 @@ type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject
 
 
 function messageFromStringGenerator(settings: Configuration) {
-  return async function messageFromString(content: string): Promise<RtMessage> {
-    return new RtMessage({ ...settings, content: content });
+  return async function messageFromString(content: string): Promise<Message> {
+    return new Message({ ...settings, content: content });
   }
 }
 function messageFromTemplateGenerator(settings: Configuration) {
@@ -73,8 +73,8 @@ function messageFromTemplateGenerator(settings: Configuration) {
 type Content = { content: string }
 
 function messageFromObjectGenerator(settings: Configuration) {
-  return async function messageFromObject(settings2: Partial<Configuration> & Content): Promise<RtMessage> {
-    return new RtMessage({ ...settings, ...settings2 });
+  return async function messageFromObject(settings2: Partial<Configuration> & Content): Promise<Message> {
+    return new Message({ ...settings, ...settings2 });
   }
 }
 

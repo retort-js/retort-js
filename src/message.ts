@@ -1,6 +1,6 @@
 import { Configuration } from "./agent";
 
-export class RtMessage {
+export class Message {
     role: "user" | "assistant" | "system" | string = "user";
     content = "";
 
@@ -11,7 +11,7 @@ export class RtMessage {
 
 }
 
-export type RtTagTemplateValueBase = string | number | boolean | undefined | null | RtMessage;
+export type RtTagTemplateValueBase = string | number | boolean | undefined | null | Message;
 export type RtTagTemplateValue = RtTagTemplateValueBase | Promise<RtTagTemplateValueBase>;
 
 
@@ -19,7 +19,7 @@ export type RtTagTemplateValue = RtTagTemplateValueBase | Promise<RtTagTemplateV
 export function createTemplateTag(settings: Configuration) {
 
 
-    return async function templateTag(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<RtMessage> {
+    return async function templateTag(templateStrings: TemplateStringsArray, ...values: RtTagTemplateValue[]): Promise<Message> {
 
         // Get the strings in raw form.
         let strings = templateStrings.raw.map(x => x);
@@ -55,7 +55,7 @@ export function createTemplateTag(settings: Configuration) {
 
         }
 
-        return new RtMessage({ ...settings, content });
+        return new Message({ ...settings, content });
     }
 }
 
