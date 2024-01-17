@@ -1,11 +1,9 @@
 import OpenAI from 'openai';
 import { RetortConfiguration } from './agent';
-import { Message as RetortMessage } from './message';
+import { Message, Message as RetortMessage } from './message';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index.mjs';
 
-
-
-async function chatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
+async function openAiChatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
     const openai = new OpenAI({
 
         apiKey: process.env.OPENAI_API_KEY,
@@ -52,5 +50,5 @@ async function chatCompletion(config: RetortConfiguration, messagePromises: (Ret
         user: undefined,
     });
 
-    return chatCompletion.choices[0].message.content
+    return new Message({ role: config.role || chatCompletion.choices[0].role, content: chatCompletion.choices[0].message.content})
 }
