@@ -3,11 +3,12 @@
   "compilerOptions": {
     "target": "es2020",
     "lib": ["es2020"],
-    "module": "commonjs",
+    "module": "es2020",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "baseUrl": "./",
     "noEmit": true,
+    "outDir": "./dist",
 
     "resolveJsonModule": true,
 
@@ -22,7 +23,6 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "alwaysStrict": true,
-    "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
