@@ -5,5 +5,5 @@ export function id(prefix: string): string {
     for (let i = 0; i < array.length; i++) {
         id += array[i].toString(36);
     }
-    return prefix + "-" + id;
+    return prefix + "_" + id;
 }
