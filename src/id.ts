@@ -1,9 +1,20 @@
 export function id(prefix: string): string {
-    let str = "";
-    for (let i = 0; i < 16; i++) {
-        str += Math.random().toString(36).substring(2) + "0";
+    const array = new Uint32Array(16);
+
+    if (!(globalThis as any).crypto || !(globalThis as any).crypto.getRandomValues) {
+        throw new Error('Your js enviroment does not support crypto.getRandomValues');
     }
 
-    // Get a simple random id
+    (globalThis as any).crypto.getRandomValues(array);
+    let str = '';
+    for (let i = 0; i < array.length; i++) {
+
+        // Not clear why array[i] can be undefined, but it can according to the types.
+        str += (array[i] || 0).toString(36);
+
+    }
     return prefix + "_" + str.substring(0, 16);
 }
+
+
+
