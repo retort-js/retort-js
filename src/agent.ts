@@ -1,5 +1,6 @@
 import { Conversation } from "./conversation";
 import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
+import { openAiChatCompletion } from "./openai-chat-completion";
 
 interface AgentFunction {
 
@@ -50,9 +51,9 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
-      let messagePromise = messageFromActionGenerator(settings)(value0 || {});
+      let messagePromise = messageFromActionGenerator(settings, conversation.messagePromises)(value0 || {});
       conversation.messages.push(messagePromise as any);
-      return messageFromActionGenerator(settings)({ ...(value0 || {}) });
+      return messagePromise;
     }
     else {
       throw new Error("Invalid message type.");
@@ -113,10 +114,10 @@ function messageFromTemplateGenerator(settings: RetortConfiguration) {
 
 type Content = { content: string }
 
-function messageFromActionGenerator(settings: RetortConfiguration) {
-  return async function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<Message> {
+function messageFromActionGenerator(settings: RetortConfiguration, messagePromises: (Message | Promise<Message>)[] = []) {
+  return function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<Message> {
     let settings3 = { ...settings, ...settings2 };
-    return new Message({ role: settings3.role || "user", content: "test reaction from " + settings3.role });
+    return openAiChatCompletion(settings3, messagePromises);
   }
 }
 
