@@ -4,7 +4,7 @@ import { id } from "./id";
 
 export class Conversation {
     readonly id = id("cnv");
-    readonly conversation = this;
+    readonly chat = this;
     readonly messagePromises: (Message | Promise<Message>)[] = [];
     get messages(): Message[] {
         for (let m of this.messagePromises) {
