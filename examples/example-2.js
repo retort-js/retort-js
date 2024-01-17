@@ -11,6 +11,6 @@ user`Does the document mention mention statuatory requirement 7b?`
 let answer =
     await assistant({ options: [Boolean]});
 
-if (answer.is `Yes`)
+if (answer.is `Yes`) {
     assistant`I'm doing well, thank you!`
 }
