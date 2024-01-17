@@ -1,9 +1,9 @@
 export function id(prefix: string): string {
-    const array = new Uint32Array(4);
-    crypto.getRandomValues(array);
-    let id = '';
-    for (let i = 0; i < array.length; i++) {
-        id += array[i].toString(36);
+    let str = "";
+    for (let i = 0; i < 16; i++) {
+        str += Math.random().toString(36).substring(2) + "0";
     }
-    return prefix + "_" + id;
+
+    // Get a simple random id
+    return prefix + "_" + str.substring(0, 16);
 }
