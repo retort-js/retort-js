@@ -50,6 +50,8 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
+      let messagePromise = messageFromActionGenerator(settings)(value0 || {});
+      conversation.messages.push(messagePromise as any);
       return messageFromActionGenerator(settings)({ ...(value0 || {}) });
     }
     else {
