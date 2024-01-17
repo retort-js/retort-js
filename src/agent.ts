@@ -21,7 +21,7 @@ interface AgentMembers {
   settings: RetortConfiguration;
 }
 
-interface Agent extends AgentFunction, AgentMembers {
+export interface Agent extends AgentFunction, AgentMembers {
 
 }
 
