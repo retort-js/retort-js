@@ -1,6 +1,8 @@
 import { RetortConfiguration, RetortRole } from "./agent";
+import { id } from "./id";
 
 export class Message {
+    readonly id: string = id("msg");
     role: RetortRole;
     content = "";
 
