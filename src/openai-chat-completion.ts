@@ -49,6 +49,12 @@ async function openAiChatCompletion(config: RetortConfiguration, messagePromises
         top_p: undefined,
         user: undefined,
     });
+    let role = config.role || chatCompletion.choices[0].message.role;
+    let content = chatCompletion.choices[0].message.content;
 
-    return new Message({ role: config.role || chatCompletion.choices[0].role, content: chatCompletion.choices[0].message.content})
+    if (content === null || content === undefined) {
+        throw new Error('OpenAI returned null or undefined content');
+    }
+
+    return new Message({ role, content })
 }
