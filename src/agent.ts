@@ -51,7 +51,10 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
-      let messagePromise = messageFromActionGenerator(settings, conversation.messagePromises)(value0 || {});
+      // snapshot messsagePromises
+      let messagePromises = conversation.messagePromises.slice(0);
+      
+      let messagePromise = messageFromActionGenerator(settings, messagePromises)(value0 || {});
       conversation.messages.push(messagePromise as any);
       return messagePromise;
     }
