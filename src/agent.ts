@@ -3,6 +3,24 @@ import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from 
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
 
+function logMessage(message: Message) {let color = '';
+switch (message.role) {
+  case 'user':
+    color = '\x1b[34m'; // Blue
+    break;
+  case 'assistant':
+    color = '\x1b[32m'; // Green
+    break;
+  case 'system':
+    color = '\x1b[33m'; // Yellow
+    break;
+  default:
+    color = '\x1b[0m'; // Reset
+}
+const resetColor = '\x1b[0m';
+const contentColor = '\x1b[37m'; // White
+console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);}
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -57,14 +75,14 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
     if (typeof value0 === "string") {
       let message = messageFromStringGenerator(settings)(value0);
 
-      console.log(message.content)
+      logMessage(message)
       conversation.messages.push(message);
       return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
       let message = messageFromTemplateGenerator(settings)(value0, ...values);
 
-      console.log(message.content)
+      logMessage(message)
       conversation.messages.push(message);
       return message;
     }
@@ -74,7 +92,7 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
 
       let messagePromise = messageFromActionGenerator(settings, messagePromises)(value0 || {});
 
-      messagePromise.then(m => console.log(m.content));
+      messagePromise.then(m => logMessage(m));
       conversation.messagePromises.push(messagePromise);
 
       // Swap out the promise for the resolved message
