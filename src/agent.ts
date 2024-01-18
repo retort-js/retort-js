@@ -3,35 +3,41 @@ import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from 
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
 
-function logMessage(message: Message) {let color = '';
-switch (message.role) {
-  case 'user':
-    color = '\x1b[34m'; // Blue
-    break;
-  case 'assistant':
-    color = '\x1b[32m'; // Green
-    break;
-  case 'system':
-    color = '\x1b[33m'; // Yellow
-    break;
-  default:
-    color = '\x1b[0m'; // Reset
+function logMessage(message: Message) {
+
+  let color = '';
+  switch (message.role) {
+    case 'user':
+      color = '\x1b[34m'; // Blue
+      break;
+    case 'assistant':
+      color = '\x1b[32m'; // Green
+      break;
+    case 'system':
+      color = '\x1b[33m'; // Yellow
+      break;
+    default:
+      color = '\x1b[0m'; // Reset
+  }
+  const resetColor = '\x1b[0m';
+  const contentColor = '\x1b[37m'; // White
+  console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);
 }
-const resetColor = '\x1b[0m';
-const contentColor = '\x1b[37m'; // White
-console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);}
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-function askQuestion(question: string): Promise<string> {
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      resolve(answer);
-    });
+function askQuestion(query: string): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
   });
+
+  return new Promise(resolve =>
+    rl.question("\n" + query, ans => {
+      readline.moveCursor(process.stdout, 0, -2);
+      readline.clearScreenDown(process.stdout);
+
+      resolve(ans);
+    })
+  );
 }
 
 interface AgentFunction {
@@ -172,7 +178,7 @@ function messageFromActionGenerator(settings: RetortConfiguration, messagePromis
 
     if (settings3.action === "input") {
       // Get input from console
-      return askQuestion("Input: ").then(content => {
+      return askQuestion("input: ").then(content => {
         return new Message({ ...settings3, content: content });
       });
     }
