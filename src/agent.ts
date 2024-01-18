@@ -75,7 +75,7 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
       let messagePromise = messageFromActionGenerator(settings, messagePromises)(value0 || {});
 
       messagePromise.then(m => console.log(m.content));
-      conversation.messages.push(messagePromise as any);
+      conversation.messagePromises.push(messagePromise);
 
       // Swap out the promise for the resolved message
       messagePromise.then(m => {
