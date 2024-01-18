@@ -76,6 +76,17 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
 
       messagePromise.then(m => console.log(m.content));
       conversation.messages.push(messagePromise as any);
+
+      // Swap out the promise for the resolved message
+      messagePromise.then(m => {
+        for (let i = 0; i < messagePromises.length; i++) {
+          if (messagePromises[i] === messagePromise) {
+            conversation.messagePromises[i] = m;
+          }
+        }
+      })
+
+
       return messagePromise;
     }
     else {
