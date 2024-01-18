@@ -1,6 +1,20 @@
 import { Conversation } from "./conversation";
 import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
+import readline from "readline";
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function askQuestion(question: string): Promise<string> {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      resolve(answer);
+    });
+  });
+}
 
 interface AgentFunction {
 
@@ -42,19 +56,25 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
   let agentFunction: AgentFunction = ((value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: RetortValue[]) => {
     if (typeof value0 === "string") {
       let message = messageFromStringGenerator(settings)(value0);
+
+      console.log(message.content)
       conversation.messages.push(message);
       return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
       let message = messageFromTemplateGenerator(settings)(value0, ...values);
+
+      console.log(message.content)
       conversation.messages.push(message);
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
       // snapshot messsagePromises
       let messagePromises = conversation.messagePromises.slice(0);
-      
+
       let messagePromise = messageFromActionGenerator(settings, messagePromises)(value0 || {});
+
+      messagePromise.then(m => console.log(m.content));
       conversation.messages.push(messagePromise as any);
       return messagePromise;
     }
@@ -120,7 +140,18 @@ type Content = { content: string }
 function messageFromActionGenerator(settings: RetortConfiguration, messagePromises: (Message | Promise<Message>)[] = []) {
   return function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<Message> {
     let settings3 = { ...settings, ...settings2 };
-    return openAiChatCompletion(settings3, messagePromises);
+
+    if (settings3.action === "input") {
+      // Get input from console
+      return askQuestion("Input: ").then(content => {
+        return new Message({ ...settings3, content: content });
+      });
+    }
+    else if (settings3.action === "generation") {
+      return openAiChatCompletion(settings3, messagePromises);
+    }
+
+    throw new Error(`Action "${settings3.action}" not implemented.`);
   }
 }
 
