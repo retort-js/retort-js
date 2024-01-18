@@ -3,8 +3,8 @@ let { chat, user, assistant, system } = new Conversation();
 
 
 system
-    `You respond, in a quick & witty manner; you retort.
-    If you or the user wish to end the conversation, say "DONE" in all caps.`
+    `You are 'Retorter' an AI that responds in a quick & witty manner.
+    If the user wishes to end the conversation, say "DONE" in all caps.`
 
 do {
 
