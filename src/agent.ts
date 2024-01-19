@@ -84,14 +84,16 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
       let message = messageFromStringGenerator(settings)(value0);
 
       logMessage(message)
-      conversation.messages.push(message);
+      conversation.messagePromises.push(message);
+      //conversation.messages.push(message);
       return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
       let message = messageFromTemplateGenerator(settings)(value0, ...values);
 
       logMessage(message)
-      conversation.messages.push(message);
+      conversation.messagePromises.push(message);
+      // conversation.messages.push(message);
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
