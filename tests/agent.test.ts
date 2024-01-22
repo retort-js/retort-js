@@ -1,13 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { agent, RetortConfiguration } from "../agent";
-import { Conversation } from "../conversation";
-
-
+import { agent, RetortConfiguration } from "../src/agent";
+import { Conversation } from "../src/conversation";
 
 describe("agent", () => {
-    let conversation: Conversation;
-    let settings: Partial<RetortConfiguration>;
-
+  let conversation: Conversation;
+  let settings: Partial<RetortConfiguration>;
 
   beforeEach(() => {
     conversation = new Conversation();
@@ -51,8 +48,21 @@ describe("agent", () => {
 
   it("should add a message to the conversation when a template string is passed", () => {
     const agentInstance = agent(conversation, {});
-    agentInstance(`Hello, world!`);
+    agentInstance`Hello, world!`;
     expect(conversation.messages).toHaveLength(1);
     expect(conversation.messages[0]?.content).toBe("Hello, world!");
+  });
+
+  it("should preserve the order of messages added to the conversation", () => {
+    const agentInstance = agent(conversation, {});
+    agentInstance("First message");
+    agentInstance("Second message");
+    expect(conversation.messages[0]?.content).toBe("First message");
+    expect(conversation.messages[1]?.content).toBe("Second message");
+  });
+
+  it("should throw an error when no conversation is provided", () => {
+    // @ts-ignore
+    expect(() => agent(null, {})).toThrow();
   });
 });
