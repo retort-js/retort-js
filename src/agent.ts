@@ -85,7 +85,6 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
 
       logMessage(message)
       conversation.messagePromises.push(message);
-      //conversation.messages.push(message);
       return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
@@ -93,7 +92,6 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
 
       logMessage(message)
       conversation.messagePromises.push(message);
-      // conversation.messages.push(message);
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
