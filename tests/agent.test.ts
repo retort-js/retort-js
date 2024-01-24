@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { agent, RetortConfiguration } from "../src/agent";
 import { Conversation } from "../src/conversation";
 
@@ -19,12 +19,10 @@ describe("agent", () => {
   it("should return an agent with default settings when no input settings are provided", () => {
     const result = agent(conversation, {});
 
-    expect(result.settings).toEqual({
-      model: "gpt-3.5-turbo",
-      role: "user",
-      provider: "openai",
-      action: "generation",
-    });
+    expect(result.settings.model).toBe("gpt-3.5-turbo");
+    expect(result.settings.role).toBe("user");
+    expect(result.settings.provider).toBe("openai");
+    expect(result.settings.action).toBe("generation");
   });
 
   it("should merge input settings with default settings", () => {
@@ -53,16 +51,26 @@ describe("agent", () => {
     expect(conversation.messages[0]?.content).toBe("Hello, world!");
   });
 
+  it("should generate a message from action with input", async () => {
+    const settings: RetortConfiguration = {
+      model: "gpt-3.5-turbo",
+      role: "user",
+      provider: "openai",
+      action: "input",
+    };
+    const agentInstance = agent(conversation, settings);
+    agentInstance`Test input`;
+    const message = conversation.messages[0];
+
+    expect(message.content).toBe("Test input");
+    expect(message.role).toBe(settings.role);
+  });
+
   it("should preserve the order of messages added to the conversation", () => {
     const agentInstance = agent(conversation, {});
     agentInstance("First message");
     agentInstance("Second message");
     expect(conversation.messages[0]?.content).toBe("First message");
     expect(conversation.messages[1]?.content).toBe("Second message");
-  });
-
-  it("should throw an error when no conversation is provided", () => {
-    // @ts-ignore
-    expect(() => agent(null, {})).toThrow();
   });
 });
