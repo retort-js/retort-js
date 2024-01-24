@@ -62,8 +62,8 @@ describe("agent", () => {
     agentInstance`Test input`;
     const message = conversation.messages[0];
 
-    expect(message.content).toBe("Test input");
-    expect(message.role).toBe(settings.role);
+    expect(message?.content).toBe("Test input");
+    expect(message?.role).toBe(settings.role);
   });
 
   it("should preserve the order of messages added to the conversation", () => {
