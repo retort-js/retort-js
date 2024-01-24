@@ -8,6 +8,7 @@ export class Conversation {
     readonly messagePromises: (Message | Promise<Message>)[] = [];
     get messages(): Message[] {
         for (let m of this.messagePromises) {
+            console.log("messagePromises", m, this.messagePromises)
             if (!(m instanceof Message)) {
                 throw new Error("Cannot access messages until all promises have resolved.");
             }
