@@ -1,13 +1,16 @@
 import crypto from "crypto";
 
 export function id(prefix: string): string {
-  const buffer = crypto.randomBytes(28);
+  const length = 28
+  const buffer = crypto.randomBytes(length);
   
   let str = "";
   
   for (let i = 0; i < buffer.length; i++) {
-    str += (buffer[i] || 0).toString(36) + 0;
+    let base36Representation = (buffer[i] || 0).toString(36);
+    let leastSignificantDigit = base36Representation[base36Representation.length - 1];
+    str += leastSignificantDigit;
   }
 
-  return prefix + "-" + str.substring(0, 28);
+  return prefix + "-" + str;
 }
