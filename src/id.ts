@@ -9,5 +9,5 @@ export function id(prefix: string): string {
     str += (buffer[i] || 0).toString(36) + 0;
   }
 
-  return prefix + "_" + str.substring(0, 28);
+  return prefix + "-" + str.substring(0, 28);
 }
