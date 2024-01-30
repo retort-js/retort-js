@@ -24,22 +24,28 @@ function logMessage(message: Message) {
   console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);
 }
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+
 
 
 function askQuestion(query: string): Promise<string> {
 
-  return new Promise(resolve =>
-    rl.question("\n" + query, ans => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise(resolve => {
+
+
+    return rl.question("\n" + query, ans => {
       readline.moveCursor(process.stdout, 0, -2);
       readline.clearScreenDown(process.stdout);
 
+      rl.close();
+
       resolve(ans);
     })
-  );
+  });
 }
 
 interface AgentFunction {
