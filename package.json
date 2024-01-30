@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "retort": "node dist/retort-runner.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

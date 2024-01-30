@@ -18,4 +18,8 @@ export class Conversation {
     user = agent(this, { role: "user", action: "input" });
     assistant = agent(this, { role: "assistant", action: "generation" });
     system = agent(this, { role: "system", action: null });
+    
+    __filePath: string | null = null;
+
+
 }
