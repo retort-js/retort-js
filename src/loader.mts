@@ -1,7 +1,5 @@
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
-
-
 
 export async function load(
     url: string,
@@ -13,23 +11,26 @@ export async function load(
 ): Promise<{
     format: NodeLoaderHooksFormat;
     source: string | Buffer | undefined;
+    shortCircuit: boolean;
 }> {
-    
-
 
     if (url.includes(".rt.")) {
 
-        console.log("Loading retort file", url);
+
         // Read the file content
         let source = fs.readFileSync(fileURLToPath(url), 'utf8');
 
+        let prefix = `async function ___rtScript($) {`;
+        let suffix = `}; module.exports = require("../dist/index.js").script(___rtScript);`;
+
         // Modify the source code
-        source = `console.log('Module loaded: ${url}');\n` + source;
+        source = prefix + source + suffix;
 
         // Return the modified source code
         return {
             format: 'commonjs',
             source,
+            shortCircuit: true,
         };
     }
 
