@@ -1,5 +1,6 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
+import { sourceTransformer } from './source-transformer.js';
 
 export async function load(
     url: string,
@@ -24,11 +25,7 @@ export async function load(
         // Read the file content
         let source = await fs.promises.readFile(fileURLToPath(url), 'utf8');
 
-        let prefix = `__rtScript(async $ => {`;
-        let suffix = `\n\n\n\n\n});\n\nfunction __rtScript(scriptFunc) { module.exports = ___retortScriptFunc(scriptFunc); }`;
-
-        // Modify the source code
-        source = prefix + source + suffix;
+        source = sourceTransformer(source);
 
         // Return the modified source code
         return {
