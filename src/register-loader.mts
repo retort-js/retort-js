@@ -2,5 +2,6 @@ import { register } from 'node:module';
 import { script } from "./script.js"
 import { pathToFileURL } from 'node:url';
 
-register('./loader.mjs', pathToFileURL(module.path));
+console.log("Registering loader");
+register('./loader.mjs', import.meta.url);
 (globalThis as any)["___retortScriptFunc"] = script;

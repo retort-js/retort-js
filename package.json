@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "retort": "node -r ./dist/register-loader.cjs"
+    "retort": "node --import ./dist/register-loader.mjs"
   },
   "keywords": [],
   "author": "",
