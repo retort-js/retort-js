@@ -18,7 +18,7 @@ export async function load(
 
 
         // Read the file content
-        let source = fs.readFileSync(fileURLToPath(url), 'utf8');
+        let source = await fs.promises.readFile(fileURLToPath(url), 'utf8');
 
         let prefix = `async function ___rtScript($) {`;
         let suffix = `\n\n\n\n\n};\n\nmodule.exports = ___retortScriptFunc(___rtScript);`;
