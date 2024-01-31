@@ -35,13 +35,11 @@ export async function load(
             let source = await fs.promises.readFile(fileURLToPath(url), "utf-8");
         }
 
-        if (typeof source !== "string") {
-            throw new Error("Retort loader cannot handle file buffers.")
-        }
-
         if (format !== 'commonjs' && format !== "module") {
             throw new Error("Retort loader cannot handle module formats other than commonjs and esm")
         }
+
+        source = source!.toString();
 
         source = sourceTransformer(source, format);
 
