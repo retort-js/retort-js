@@ -1,4 +1,3 @@
-console.log("starting");
-
+$.assistant `HOWDY!`
 
          throw new Error("test error");
