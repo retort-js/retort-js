@@ -14,7 +14,11 @@ export async function load(
     shortCircuit: boolean;
 }> {
 
-    if (url.includes(".rt.")) {
+    // Get just the name of the file from the url
+    let components = url.trim().split('/');
+    let filename = components.pop() || components.pop() || "";
+
+    if (filename.includes(".rt.")) {
 
 
         // Read the file content
