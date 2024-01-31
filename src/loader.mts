@@ -1,7 +1,7 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
 import { sourceTransformer } from './source-transformer.js';
-import { defineCreateScriptGlobal } from 'src/script.js';
+import { defineCreateScriptGlobal } from './script.js';
 
 defineCreateScriptGlobal();
 

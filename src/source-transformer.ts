@@ -1,4 +1,4 @@
-import { createScriptGlobalName } from "src/script";
+import { createScriptGlobalName } from "./script";
 
 const sharedSuffix = `\n\n\n\n\n};\n\n`
 
