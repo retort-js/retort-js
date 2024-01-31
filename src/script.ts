@@ -36,6 +36,4 @@ export function script<T extends Tuple>(chatFunction: ChatFunction<T>): RetortSc
 
 }
 
-script(($, x: string) => {}).run("hello");
-
 type ChatFunction<T extends Tuple> = ($: Conversation, ...values: T) => any;
