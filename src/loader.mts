@@ -31,12 +31,9 @@ export async function load(
             defaultLoad
           );
 
-        if (typeof source !== "string") {
-            throw new Error("Retort loader: source must be supplied to the loader as a string.")
+        source = sourceTransformer(source!.toString());
 
-        }
-
-        source = sourceTransformer(source);
+        console.log("loader.load:", source)
 
         // Return the modified source code
         return {
