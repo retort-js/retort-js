@@ -23,17 +23,27 @@ export async function load(
 
 
         // Read the file content
-        let {source, format} = await defaultLoad(
+        let { source, format } = await defaultLoad(
             url,
             {
-              ...context,
+                ...context,
             },
             defaultLoad
-          );
+        );
 
-        source = sourceTransformer(source!.toString());
+        if (source === null || source === undefined) {
+            let source = await fs.promises.readFile(fileURLToPath(url), "utf-8");
+        }
 
-        console.log("loader.load:", source)
+        if (typeof source !== "string") {
+            throw new Error("Retort loader cannot handle file buffers.")
+        }
+
+        if (format !== 'commonjs' && format !== "module") {
+            throw new Error("Retort loader cannot handle module formats other than commonjs and esm")
+        }
+
+        source = sourceTransformer(source, format);
 
         // Return the modified source code
         return {

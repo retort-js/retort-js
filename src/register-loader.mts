@@ -4,4 +4,4 @@ import { pathToFileURL } from 'node:url';
 
 console.log("Registering loader");
 register('./loader.mjs', import.meta.url);
-(globalThis as any)["___retortScriptFunc"] = script;
+(globalThis as any)["__rtjsCreateModule"] = script;
