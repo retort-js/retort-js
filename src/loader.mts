@@ -12,26 +12,37 @@ export async function load(
 ): Promise<{
     format: NodeLoaderHooksFormat;
     source: string | Buffer | undefined;
-    shortCircuit: boolean;
+    shortCircuit?: boolean;
 }> {
 
     // Get just the name of the file from the url
     let components = url.trim().split('/');
     let filename = components.pop() || components.pop() || "";
 
-    if (filename.includes(".rt.")) {
+    if (filename.includes(".rt.") || filename.endsWith(".retort") || filename.includes(".retort.")) {
 
 
         // Read the file content
-        let source = await fs.promises.readFile(fileURLToPath(url), 'utf8');
+        let {source, format} = await defaultLoad(
+            url,
+            {
+              ...context,
+            },
+            defaultLoad
+          );
+
+        if (typeof source !== "string") {
+            throw new Error("Retort loader: source must be supplied to the loader as a string.")
+
+        }
 
         source = sourceTransformer(source);
 
         // Return the modified source code
         return {
-            format: 'commonjs',
+            format: format,
             source: source,
-            shortCircuit: true,
+            // shortCircuit: true,
         };
     }
 
