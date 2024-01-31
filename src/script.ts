@@ -36,4 +36,11 @@ export function script<T extends Tuple>(chatFunction: ChatFunction<T>): RetortSc
 
 }
 
+export const createScriptGlobalName = "__rtjsCreateScript";
+
+export function defineCreateScriptGlobal() {
+    (globalThis as any)["__rtjsCreateScript"] = script;
+}
+
+
 type ChatFunction<T extends Tuple> = ($: Conversation, ...values: T) => any;

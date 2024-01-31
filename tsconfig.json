@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "src/loader/.mts"],
   "compilerOptions": {
     "target": "es2020",
     "lib": ["es2020"],

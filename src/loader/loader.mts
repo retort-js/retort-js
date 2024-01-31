@@ -1,6 +1,9 @@
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
 import { sourceTransformer } from './source-transformer.js';
+import { defineCreateScriptGlobal } from 'src/script.js';
+
+defineCreateScriptGlobal();
 
 export async function load(
     url: string,
