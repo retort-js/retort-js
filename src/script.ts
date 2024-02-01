@@ -25,7 +25,7 @@ export function script<T extends Tuple>(chatFunction: ChatFunction<T>): RetortSc
         run
     }
 
-    // Only run the chat function if this module is the main module.
+    // Atomatically run the chat function if this module is the main module.
     setTimeout(() => {
         if (returnedModule.__retortChatFunctionId === require.main?.exports?.__retortChatFunctionId) {
             (returnedModule.run as any)();
