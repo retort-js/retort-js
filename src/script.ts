@@ -3,9 +3,11 @@ import { id } from "./id";
 
 type Tuple = unknown[];
 
-export interface RetortScript<T extends Tuple> {
-    run: (...values: T) => any;
+export interface RetortScript<T extends Tuple = any[]> {
+    __retortChatFunctionId: string;
+    run: (...values: T) => Conversation;
 }
+
 
 export function script<T extends Tuple>(chatFunction: ChatFunction<T>): RetortScript<T> {
 
