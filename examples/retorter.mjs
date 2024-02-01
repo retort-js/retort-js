@@ -22,8 +22,8 @@ $.system
 
 do {
 
-    await $.user.input();
+    await $.user();
 
-    var reply = await $.assistant.generation();
+    var reply = await $.assistant();
 
 } while (!reply.content.includes("DONE"))
