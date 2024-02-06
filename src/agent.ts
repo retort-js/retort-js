@@ -1,9 +1,9 @@
 import { Conversation } from "./conversation";
-import { Message, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
+import { RetortMessage, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
 
-function logMessage(message: Message) {
+function logMessage(message: RetortMessage) {
 
   let color = '';
   switch (message.role) {
@@ -51,15 +51,15 @@ function askQuestion(query: string): Promise<string> {
 interface AgentFunction {
 
   // assistant ("Hello")
-  (content: string): Message;
+  (content: string): RetortMessage;
 
   // assistant `Hello`
-  (templateStrings: TemplateStringsArray, ...values: RetortValue[]): Message;
+  (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
 
   // assistant() 
   // or 
   // assistant({model: "gpt-5"})
-  (settings?: Partial<RetortConfiguration>): Promise<Message>;
+  (settings?: Partial<RetortConfiguration>): Promise<RetortMessage>;
 }
 
 interface AgentMembers {
@@ -170,8 +170,8 @@ type MessageMethod = MessageFromString | MessageFromTemplate | MessageFromObject
 
 
 function messageFromStringGenerator(settings: RetortConfiguration) {
-  return function messageFromString(content: string): Message {
-    return new Message({ ...settings, content: content });
+  return function messageFromString(content: string): RetortMessage {
+    return new RetortMessage({ ...settings, content: content });
   }
 }
 function messageFromTemplateGenerator(settings: RetortConfiguration) {
@@ -180,14 +180,14 @@ function messageFromTemplateGenerator(settings: RetortConfiguration) {
 
 type Content = { content: string }
 
-function messageFromActionGenerator(settings: RetortConfiguration, messagePromises: (Message | Promise<Message>)[] = []) {
-  return function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<Message> {
+function messageFromActionGenerator(settings: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[] = []) {
+  return function messageFromAction(settings2: Partial<RetortConfiguration>): Promise<RetortMessage> {
     let settings3 = { ...settings, ...settings2 };
 
     if (settings3.action === "input") {
       // Get input from console
       return askQuestion("input: ").then(content => {
-        return new Message({ ...settings3, content: content });
+        return new RetortMessage({ ...settings3, content: content });
       });
     }
     else if (settings3.action === "generation") {

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { RetortConfiguration } from './agent';
-import { Message, Message as RetortMessage } from './message';
+import { RetortMessage, RetortMessage as RetortMessage } from './message';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index';
 
 export async function openAiChatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
@@ -60,5 +60,5 @@ export async function openAiChatCompletion(config: RetortConfiguration, messageP
         throw new Error('OpenAI returned null or undefined content');
     }
 
-    return new Message({ role, content })
+    return new RetortMessage({ role, content })
 }
