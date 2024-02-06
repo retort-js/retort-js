@@ -4,7 +4,7 @@ import { id } from "./id";
 interface RetortScript<T> {
     run: (...values: any[]) => RetortScriptInProgress<T>;
     scriptId: string;
-    __retortType: "Script";
+    __retortType: "script";
 
 }
 
@@ -43,7 +43,7 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
     let returnedModule: RetortScript<T> = {
         scriptId,
         run,
-        __retortType: "Script"
+        __retortType: "script"
     }
 
     // Only run the chat function if this module is the main module.
