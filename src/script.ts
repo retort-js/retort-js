@@ -8,9 +8,10 @@ interface RetortScript<T> {
 
 }
 
-interface RetortScriptInProgress<T> extends Promise<T> {
+interface RetortScriptInProgress<T> {
     scriptId: string;
     $: Conversation;
+    completionPromise: Promise<T>
 
 }
 
@@ -30,12 +31,17 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
 
 
 
-        let executing = runInner() as RetortScriptInProgress<T>;
-        executing.$ = conversation;
-        executing.scriptId = scriptId;
+        let executing = runInner();
+
+        let scriptInProgress = {
+            scriptId,
+            $: conversation,
+            completionPromise: executing
+        }
 
 
-        return executing;
+
+        return scriptInProgress;
 
 
     };
