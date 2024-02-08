@@ -1,7 +1,7 @@
 {
   "name": "retort-js",
   "version": "0.0.1",
-  "description": "",
+  "description": "Intuitive, production-ready prompt chaining in Javascript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "repository": {
@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Daniel Huggins",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.11.16",
