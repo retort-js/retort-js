@@ -2,6 +2,7 @@
 /src
 /examples
 
+.github
 .env*
 .DS_Store
 
