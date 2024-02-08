@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "repository": {
-    "url" : "https://github/retort-js/retort-js"
+    "url": "https://github/retort-js/retort-js"
   },
   "scripts": {
     "build": "tsc",
@@ -16,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^20.11.16",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
