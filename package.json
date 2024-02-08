@@ -12,7 +12,14 @@
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "Retort",
+    "Retort-js",
+    "Prompting",
+    "Prompt-chaining",
+    "LLM",
+    "AI"
+  ],
   "author": "Daniel Huggins",
   "license": "MIT",
   "devDependencies": {
