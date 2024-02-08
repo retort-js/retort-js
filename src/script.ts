@@ -4,12 +4,13 @@ import { id } from "./id";
 interface RetortScript<T> {
   run: (...values: any[]) => RetortScriptInProgress<T>;
   scriptId: string;
-  __retortType: "Script";
+  __retortType: "script";
 }
 
-interface RetortScriptInProgress<T> extends Promise<T> {
+interface RetortScriptInProgress<T> {
   scriptId: string;
   $: Conversation;
+  completionPromise: Promise<T>;
 }
 
 export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
@@ -22,17 +23,21 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
       return chatFunction(conversation, ...values);
     }
 
-    let executing = runInner() as RetortScriptInProgress<T>;
-    executing.$ = conversation;
-    executing.scriptId = scriptId;
+    let executing = runInner();
 
-    return executing;
+    let scriptInProgress = {
+      scriptId,
+      $: conversation,
+      completionPromise: executing,
+    };
+
+    return scriptInProgress;
   };
 
   let returnedModule: RetortScript<T> = {
     scriptId,
     run,
-    __retortType: "Script",
+    __retortType: "script",
   };
 
   // Only run the chat function if this module is the main module.
