@@ -2,7 +2,7 @@
 /src
 /examples
 
-.env
+.env*
 .DS_Store
 
 tsconfig.json
