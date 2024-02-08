@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: "16.x"
 
+      - name: Install dependencies
+        run: npm install
+
       # Add your build steps here
       - name: Build
         run: npm run build
