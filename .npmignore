@@ -1,0 +1,8 @@
+/node_modules
+/src
+/examples
+
+.env*
+.DS_Store
+
+tsconfig.json
