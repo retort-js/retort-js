@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { RetortConfiguration } from './agent';
-import { RetortMessage, RetortMessage as RetortMessage } from './message';
+import { RetortMessage as RetortMessage } from './message';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index';
 
 export async function openAiChatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
