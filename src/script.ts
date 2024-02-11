@@ -40,13 +40,6 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
     __retortType: "script",
   };
 
-  // Only run the chat function if this module is the main module.
-  setTimeout(() => {
-    if (returnedModule.scriptId === require.main?.exports?.scriptId) {
-      returnedModule.run();
-    }
-  }, 0);
-
   return returnedModule;
 }
 
