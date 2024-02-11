@@ -1,13 +1,13 @@
 import { Conversation } from "./conversation";
 import { id } from "./id";
 
-interface RetortScript<T> {
+export interface RetortScript<T> {
   run: (...values: any[]) => RetortScriptInProgress<T>;
   scriptId: string;
   __retortType: "script";
 }
 
-interface RetortScriptInProgress<T> {
+export interface RetortScriptInProgress<T> {
   scriptId: string;
   $: Conversation;
   completionPromise: Promise<T>;
