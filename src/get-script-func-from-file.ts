@@ -2,6 +2,7 @@ import vm from "vm"
 import fs from "fs";
 import path from "path";
 import { getRetortDir } from "./get-retort-dir";
+import { ScriptFunction } from "./script";
 
 export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: string) {
   // Get the file name
@@ -24,7 +25,7 @@ export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: strin
   // Run the script in the VM
   let scriptFunc = vm.runInThisContext(code, { filename: scriptPath, columnOffset: scriptPrefix.length, lineOffset: 0 });
 
-  return scriptFunc;
+  return scriptFunc as ScriptFunction<any>;
 }
 
 export function stringToValidJsIdentifier(str: string) {
