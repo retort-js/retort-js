@@ -43,4 +43,15 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
   return returnedModule;
 }
 
+export function checkIsScript<T>(script: RetortScript<T>): asserts script is RetortScript<T> {
+
+  if (typeof script !== "object") {
+    throw new Error(`Expected an object, but got something else`);
+  }
+
+  if (script.__retortType !== "script") {
+    throw new Error(`Expected a script, but got something else`);
+  }
+};
+
 type ChatFunction<T> = ($: Conversation, ...values: any[]) => T;
