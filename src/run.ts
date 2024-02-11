@@ -20,8 +20,9 @@ export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: strin
   // Read the script file
   const scriptPath = path.join(getRetortDir(), scriptPathRelativeToRetortDir);
   const innerCode = await fs.promises.readFile(scriptPath, 'utf8');
-  let scriptPrefix = getScriptPrefix(fileName);
-  let scriptSuffix = getScriptSuffix(fileName);
+  let identifier = stringToValidJsIdentifier(fileName);
+  let scriptPrefix = getScriptPrefix(identifier);
+  let scriptSuffix = getScriptSuffix(identifier);
   const code = scriptPrefix + innerCode + scriptSuffix;
 
   // Run the script in the VM
