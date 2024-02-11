@@ -1,11 +1,7 @@
-import { Conversation } from "./conversation";
-import { id } from "./id";
 import vm from "vm"
 import fs from "fs";
 import path from "path";
 import { getRetortDir } from "./retort-dir";
-import { script } from "./script";
-
 
 export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: string) {
   // Get the file name
