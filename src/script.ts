@@ -2,33 +2,35 @@ import { Conversation } from "./conversation";
 import { id } from "./id";
 
 export interface RetortScript<T> {
-  run: (...values: any[]) => RetortScriptInProgress<T>;
+  run: (params?: T) => RetortScriptInProgress<T>;
   scriptId: string;
-  __retortType: "script";
+  retortType: "RetortScript";
 }
 
 export interface RetortScriptInProgress<T> {
   scriptId: string;
   $: Conversation;
   completionPromise: Promise<T>;
+  retortType: "RetortScriptInProgress";
 }
 
 export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
   let scriptId = id("script");
 
-  let run = (...values: any[]): RetortScriptInProgress<T> => {
+  let run = (params?: any): RetortScriptInProgress<T> => {
     const conversation = new Conversation();
 
     async function runInner() {
-      return chatFunction(conversation, ...values);
+      return chatFunction(conversation);
     }
 
     let executing = runInner();
 
-    let scriptInProgress = {
+    let scriptInProgress: RetortScriptInProgress<T> = {
       scriptId,
       $: conversation,
       completionPromise: executing,
+      retortType: "RetortScriptInProgress",
     };
 
     return scriptInProgress;
@@ -37,7 +39,7 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
   let returnedModule: RetortScript<T> = {
     scriptId,
     run,
-    __retortType: "script",
+    retortType: "RetortScript",
   };
 
   return returnedModule;
@@ -49,9 +51,9 @@ export function checkIsScript<T>(script: RetortScript<T>): asserts script is Ret
     throw new Error(`Expected an object, but got something else`);
   }
 
-  if (script.__retortType !== "script") {
+  if (script.retortType !== "RetortScript") {
     throw new Error(`Expected a script, but got something else`);
   }
 };
 
-type ChatFunction<T> = ($: Conversation, ...values: any[]) => T;
+type ChatFunction<T> = ($: Conversation) => T;
