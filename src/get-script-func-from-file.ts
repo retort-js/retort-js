@@ -1,7 +1,7 @@
 import vm from "vm"
 import fs from "fs";
 import path from "path";
-import { getRetortDir } from "./retort-dir";
+import { getRetortDir } from "./get-retort-dir";
 
 export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: string) {
   // Get the file name
