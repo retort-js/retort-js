@@ -20,7 +20,7 @@ export async function resolveScriptToFilePath(scriptName: string) {
 
   let pathsToCheck = placesToCheck.map((place) => path.join(getRetortDir(), place));
 
-  
+
   // Check if each one exists asynchonously.
   let extantScriptPaths = (await Promise.all(pathsToCheck.map(async (fullPath) => {
     let exists = await fs.promises
@@ -38,9 +38,12 @@ export async function resolveScriptToFilePath(scriptName: string) {
   if (extantScriptPaths.length > 1) {
     throw new Error(`Multiple scripts found at these paths: ${extantScriptPaths.join(", ")}`);
   }
+  
+  let filePath = extantScriptPaths[0]!;
 
-  return extantScriptPaths[0];
+  let isRetortScript = path.basename(filePath).includes(".rt.");
 
+  return { filePath: filePath, retortFileType: isRetortScript ? "script" : "module" };
+};
 
-}
 
