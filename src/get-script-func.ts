@@ -2,13 +2,8 @@ import { getScriptFuncFromFile } from "./get-script-func-from-file";
 import { resolveScriptToFilePath } from "./resolve-script-to-file-path";
 import { RetortScript, checkIsScriptObject, script } from "./script";
 import { pathToFileURL } from "url";
-export async function getScriptFunc(scriptName: string, params? : any) {
+export async function getScriptFunc(scriptName: string) {
   
-
-  if (params) {
-    throw new Error("Params are not yet supported");
-  }
-
   let {filePath, retortFileType} = await resolveScriptToFilePath(scriptName);
 
   let scriptObject: RetortScript<any>;
