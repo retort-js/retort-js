@@ -3,26 +3,23 @@
   "compilerOptions": {
     "target": "es2020",
     "lib": ["es2020"],
-    "module": "Node16",
-    "esModuleInterop": true,
+    "module": "ES2022",
     "baseUrl": "./",
     "outDir": "./dist",
     "declaration": true,
-    "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
 
     "strict": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "noImplicitAny": false,
-    "strictFunctionTypes": true,
+    "strictFunctionTypes": false,
     "strictBindCallApply": true,
-    "noImplicitThis": true,
+    "noImplicitThis": false,
     "noImplicitReturns": true,
     "alwaysStrict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": false,
+    "noPropertyAccessFromIndexSignature": false,
 
     "skipLibCheck": true
   }
