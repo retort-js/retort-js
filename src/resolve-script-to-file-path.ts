@@ -42,8 +42,9 @@ export async function resolveScriptToFilePath(scriptName: string) {
   let filePath = extantScriptPaths[0]!;
 
   let isRetortScript = path.basename(filePath).includes(".rt.");
+  const retortFileType = isRetortScript ? "script" : "module" as "script" | "module";
 
-  return { filePath: filePath, retortFileType: isRetortScript ? "script" : "module" };
+  return { filePath: filePath, retortFileType };
 };
 
 

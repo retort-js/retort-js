@@ -22,6 +22,7 @@ export async function getScriptFuncFromFile(filePath: string) {
   const code = scriptPrefix + innerCode + scriptSuffix;
 
   // Run the script in the VM
+  vm.Module
   let scriptFunc = vm.runInThisContext(code, { filename: filePath, columnOffset: scriptPrefix.length, lineOffset: 0 });
 
   return scriptFunc as ScriptFunction<any>;
@@ -33,8 +34,8 @@ export function stringToValidJsIdentifier(str: string) {
 
 let getScriptPrefix = (name: string) => `
 ((() => {
-  const ${name} = async (__$__) => {
-    const $ = __$__;
+  const ${name} = async (_$, require) => {
+    const $ = _$;
 
 
 `.trim().replace(/ *[\r\n] */g, " ")

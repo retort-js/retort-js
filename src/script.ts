@@ -36,4 +36,4 @@ export function checkIsScriptObject<T>(script: RetortScript<T>): asserts script 
   }
 };
 
-export type ScriptFunction<T> = ($: Conversation) => T;
+export type ScriptFunction<T> = ($: Conversation, require?: any) => T;
