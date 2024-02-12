@@ -5,6 +5,7 @@ import { getRetortDir } from "./get-retort-dir";
 import { ScriptFunction } from "./script";
 
 export async function getScriptFuncFromFile(filePath: string) {
+
   // Get the file name
   const fileName = path.basename(filePath);
 
@@ -22,9 +23,23 @@ export async function getScriptFuncFromFile(filePath: string) {
   const code = scriptPrefix + innerCode + scriptSuffix;
 
   // Run the script in the VM
-  vm.Module
-  let scriptFunc = vm.runInThisContext(code, { filename: filePath, columnOffset: scriptPrefix.length, lineOffset: 0 });
+  try {
+    var scriptFunc = vm.runInThisContext(code, { filename: filePath, columnOffset: scriptPrefix.length, lineOffset: 0 });
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      if (e.message.includes("Cannot use import statement outside a module")) {
+        throw new Error(`Static imports are not yet supported in Retort scripts. Use require instead. File: ${filePath}`);
+      }
 
+      if (e.message.includes("Unexpected token 'export'")) {
+        throw new Error(`You can't export from a Retort script file. Use retort modules, or "return" instead. File: ${filePath}`);
+      }
+
+    }
+    throw e;
+  }
+
+  
   return scriptFunc as ScriptFunction<any>;
 }
 
