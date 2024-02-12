@@ -1,3 +1,3 @@
-$.user `Hello, World!`
+$.user `Say "Hello, World!"`
 
 await $.assistant();
