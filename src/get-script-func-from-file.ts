@@ -4,9 +4,9 @@ import path from "path";
 import { getRetortDir } from "./get-retort-dir";
 import { ScriptFunction } from "./script";
 
-export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: string) {
+export async function getScriptFuncFromFile(filePath: string) {
   // Get the file name
-  const fileName = path.basename(scriptPathRelativeToRetortDir);
+  const fileName = path.basename(filePath);
 
   if (!/^[a-zA-Z]/.test(fileName)) {
     throw new Error(`Script file name must start with a letter: ${fileName}`);
@@ -15,15 +15,14 @@ export async function getScriptFuncFromFile(scriptPathRelativeToRetortDir: strin
 
 
   // Read the script file
-  const scriptPath = path.join(getRetortDir(), scriptPathRelativeToRetortDir);
-  const innerCode = await fs.promises.readFile(scriptPath, 'utf8');
+  const innerCode = await fs.promises.readFile(filePath, 'utf8');
   let identifier = stringToValidJsIdentifier(fileName);
   let scriptPrefix = getScriptPrefix(identifier);
   let scriptSuffix = getScriptSuffix(identifier);
   const code = scriptPrefix + innerCode + scriptSuffix;
 
   // Run the script in the VM
-  let scriptFunc = vm.runInThisContext(code, { filename: scriptPath, columnOffset: scriptPrefix.length, lineOffset: 0 });
+  let scriptFunc = vm.runInThisContext(code, { filename: filePath, columnOffset: scriptPrefix.length, lineOffset: 0 });
 
   return scriptFunc as ScriptFunction<any>;
 }

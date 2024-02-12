@@ -2,7 +2,7 @@ import { Conversation } from "./conversation";
 import { getScriptFunc } from "./get-script-func";
 import { RetortScriptInProgress } from "./script";
 
-export default function run(scriptName: string) {
+export function run(scriptName: string) {
 
   const conversation = new Conversation();
 

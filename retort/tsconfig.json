@@ -1,0 +1,29 @@
+{
+  "include": ["./"],
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["es2020"],
+    "module": "Node16",
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
+
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "alwaysStrict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    "skipLibCheck": true
+  }
+}
