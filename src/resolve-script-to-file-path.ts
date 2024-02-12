@@ -8,7 +8,7 @@ export async function resolveScriptToFilePath(scriptName: string) {
     throw new Error("No script name provided");
   }
 
-  let retortExtensions = [".rt.js", ".rtm.js", ".rtm.mjs", ".rtm.cjs",];
+  let retortExtensions = [".rt.js", ".rt.mjs", ".rt.cjs", ".rtm.js", ".rtm.mjs", ".rtm.cjs",];
 
   let scriptNameSpecifiesKnownRetortExtension = retortExtensions.some((ext) => scriptName.endsWith(ext));
 
