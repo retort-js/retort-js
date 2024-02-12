@@ -21,7 +21,7 @@ function logMessage(message: RetortMessage) {
   }
   const resetColor = '\x1b[0m';
   const contentColor = '\x1b[37m'; // White
-  console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);
+  console.log(`\n${color}$.${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);
 }
 
 
