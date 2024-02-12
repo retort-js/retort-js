@@ -1,1 +1,0 @@
-$.assistant `Hello, World!`
