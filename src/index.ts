@@ -1,4 +1,4 @@
 export { Conversation } from "./conversation.js";
-export { Retort } from "./retort.js";
-import { Retort } from "./retort.js";
-export default Retort;
+export { retort } from "./retort.js";
+import { retort } from "./retort.js";
+export default retort;

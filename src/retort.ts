@@ -1,22 +1,22 @@
 import { Conversation } from "./conversation";
 import { id } from "./id";
 
-interface RetortScript<T> {
-  _run: (...values: any[]) => RetortScriptInProgress<T>;
+export interface Retort<T> {
+  _run: (...values: any[]) => RetortInProgress<T>;
   retortId: string;
   retortType: "retort";
 }
 
-interface RetortScriptInProgress<T> {
+export interface RetortInProgress<T> {
   retortId: string;
   $: Conversation;
   completionPromise: Promise<T>;
 }
 
-export function Retort<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
+export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
   let retortId = id("retort");
 
-  let run = (...values: any[]): RetortScriptInProgress<T> => {
+  let run = (...values: any[]): RetortInProgress<T> => {
     const conversation = new Conversation();
 
     async function runInner() {
@@ -34,7 +34,7 @@ export function Retort<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
     return scriptInProgress;
   };
 
-  let returnedModule: RetortScript<T> = {
+  let returnedModule: Retort<T> = {
     retortId: retortId,
     _run: run,
     retortType: "retort",
