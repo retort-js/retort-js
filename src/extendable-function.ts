@@ -1,23 +1,24 @@
-export class RetortExtendableFunction extends Function {
+abstract class RetortExtendableFunction extends Function {
 
   // @ts-expect-error
-  protected _wrappedFunction: Function;
-
-  // @ts-expect-error
-  constructor(wrappedFunction?: Function) {
+  constructor() {
     function _retortFunctionWrapper(): any {
-      const self = _retortFunctionWrapper as unknown as RetortExtendableFunction;
-      if (typeof self._wrappedFunction !== "function") {
+      const self = _retortFunctionWrapper as any;
+      if (typeof self.__wrappedFunction !== "function") {
         throw new Error("RetortExtendableFunction: __wrappedFunction not a function");
       }
-      return self._wrappedFunction.apply(_retortFunctionWrapper, arguments);
+      return self.__wrappedFunction.apply(_retortFunctionWrapper, arguments);
     }
 
-    const self = _retortFunctionWrapper as unknown as RetortExtendableFunction;
+    const self = _retortFunctionWrapper as any;
 
-    self._wrappedFunction = wrappedFunction ?? (() => { throw new Error("RetortExtendableFunction: __wrappedFunction not set") });
+    self.__wrappedFunction = 
+    (() => { throw new Error("RetortExtendableFunction: __wrappedFunction not set") }) as any;
 
 
     return Object.setPrototypeOf(self, new.target.prototype);
   }
 }
+
+
+export { RetortExtendableFunction }

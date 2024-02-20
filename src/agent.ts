@@ -1,4 +1,5 @@
 import { Conversation } from "./conversation";
+import { RetortExtendableFunction } from "./extendable-function";
 import { RetortMessage, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
@@ -71,49 +72,40 @@ export interface Agent extends AgentFunction, AgentMembers {
 
 }
 
-export function agent(conversation: Conversation, inputSettings: Partial<RetortConfiguration>): Agent {
+class RetortAgent extends RetortExtendableFunction {
 
-  let settings: RetortConfiguration = {
-    model: "gpt-3.5-turbo",
-    role: "user",
-    provider: "openai",
-    action: "generation",
-  };
+  conversation: Conversation;
+  settings: RetortConfiguration;
 
-
-  if (inputSettings) {
-    settings = { ...settings, ...inputSettings };
-  }
-
-  let agentFunction: AgentFunction = ((value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: RetortValue[]) => {
+  __wrappedFunction(value0: string | (Partial<RetortConfiguration> & Content) | TemplateStringsArray, ...values: RetortValue[]) {
     if (typeof value0 === "string") {
-      let message = messageFromStringGenerator(settings)(value0);
+      let message = messageFromStringGenerator(this.settings)(value0);
 
       logMessage(message)
-      conversation.messagePromises.push(message);
+      this.conversation.messagePromises.push(message);
       return message;
     }
     else if (isTemplateStringsArray(value0) && value0 instanceof Array) {
-      let message = messageFromTemplateGenerator(settings)(value0, ...values);
+      let message = messageFromTemplateGenerator(this.settings)(value0, ...values);
 
       logMessage(message)
-      conversation.messagePromises.push(message);
+      this.conversation.messagePromises.push(message);
       return message;
     }
     else if (!value0 || typeof value0 === "object") {
       // snapshot messsagePromises
-      let messagePromises = conversation.messagePromises.slice(0);
+      let messagePromises = this.conversation.messagePromises.slice(0);
 
-      let messagePromise = messageFromActionGenerator(settings, messagePromises)(value0 || {});
+      let messagePromise = messageFromActionGenerator(this.settings, messagePromises)(value0 || {});
 
       messagePromise.then(m => logMessage(m));
-      conversation.messagePromises.push(messagePromise);
+      this.conversation.messagePromises.push(messagePromise);
 
       // Swap out the promise for the resolved message
       messagePromise.then(m => {
         for (let i = 0; i < messagePromises.length; i++) {
           if (messagePromises[i] === messagePromise) {
-            conversation.messagePromises[i] = m;
+            this.conversation.messagePromises[i] = m;
           }
         }
       })
@@ -126,27 +118,34 @@ export function agent(conversation: Conversation, inputSettings: Partial<RetortC
     }
 
 
-  }) as AgentFunction;
+  }
+  
 
-  let agentMembers: AgentMembers = {
-    conversation: conversation,
-    settings: settings,
-  };
 
-  let agent = agentFunction as Agent;
 
-  for (let key in Object.keys(agentMembers)) {
-    // Define them as readonly properties
-    Object.defineProperty(agent, key, {
-      value: agentMembers[key as keyof AgentMembers],
-      writable: false,
-      enumerable: true,
-      configurable: false
-    });
+
+
+  constructor(conversation: Conversation, inputSettings: Partial<RetortConfiguration>) {
+    super();
+    this.conversation = conversation;
+
+
+    let settings: RetortConfiguration = {
+      model: "gpt-3.5-turbo",
+      role: "user",
+      provider: "openai",
+      action: "generation",
+    };
+
+    this.settings = settings = { ...settings, ...(inputSettings || {}) };;
   }
 
-  return agent;
 }
+
+const _RetortAgent = RetortAgent as unknown as AgentFunction & RetortAgent
+
+export {_RetortAgent as RetortAgent};
+
 
 
 export type RetortAction = "input" | "generation" | "answer" | "instruction";
