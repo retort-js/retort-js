@@ -130,15 +130,22 @@ class RetortAgent extends RetortExtendableFunction {
     this.settings = settings = { ...settings, ...(inputSettings || {}) };;
   }
 
-  async input(inputSettings?: Partial<RetortConfiguration>) {
-    return askQuestion("input: ").then(content => {
+  input(inputSettings?: Partial<RetortConfiguration>) {
+    let m = askQuestion("input: ").then(content => {
       return new RetortMessage({ ...this.settings, ...inputSettings, content: content });
     });
+    this.conversation.messagePromises.push(m);
+    m.then(m => logMessage(m));
+    return m;
   }
 
-  async generation(generationSettings?: Partial<RetortConfiguration>) {
+  generation(generationSettings?: Partial<RetortConfiguration>) {
+    let messagePromises = this.conversation.messagePromises.slice(0);
 
-    return openAiChatCompletion({ ...this.settings, ...generationSettings }, this.conversation.messagePromises);
+    let m = openAiChatCompletion({ ...this.settings, ...generationSettings }, messagePromises);
+    this.conversation.messagePromises.push(m);
+    m.then(m => logMessage(m));
+    return m;
   }
 
 }
