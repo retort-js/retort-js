@@ -146,6 +146,10 @@ const _RetortAgent = RetortAgent as unknown as AgentFunction & RetortAgent
 
 export {_RetortAgent as RetortAgent};
 
+export function agent(conversation: Conversation, settings: Partial<RetortConfiguration>): RetortAgent {
+  return new RetortAgent(conversation, settings);
+}
+
 
 
 export type RetortAction = "input" | "generation" | "answer" | "instruction";
