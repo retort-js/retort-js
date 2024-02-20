@@ -1,22 +1,22 @@
 import { Conversation } from "./conversation";
 import { id } from "./id";
 
-interface RetortScript<T> {
-  run: (...values: any[]) => RetortScriptInProgress<T>;
-  scriptId: string;
-  __retortType: "script";
+export interface Retort<T> {
+  _run: (...values: any[]) => RetortInProgress<T>;
+  retortId: string;
+  retortType: "retort";
 }
 
-interface RetortScriptInProgress<T> {
-  scriptId: string;
+export interface RetortInProgress<T> {
+  retortId: string;
   $: Conversation;
   completionPromise: Promise<T>;
 }
 
-export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
-  let scriptId = id("script");
+export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
+  let retortId = id("retort");
 
-  let run = (...values: any[]): RetortScriptInProgress<T> => {
+  let run = (...values: any[]): RetortInProgress<T> => {
     const conversation = new Conversation();
 
     async function runInner() {
@@ -26,7 +26,7 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
     let executing = runInner();
 
     let scriptInProgress = {
-      scriptId,
+      retortId: retortId,
       $: conversation,
       completionPromise: executing,
     };
@@ -34,16 +34,16 @@ export function script<T>(chatFunction: ChatFunction<T>): RetortScript<T> {
     return scriptInProgress;
   };
 
-  let returnedModule: RetortScript<T> = {
-    scriptId,
-    run,
-    __retortType: "script",
+  let returnedModule: Retort<T> = {
+    retortId: retortId,
+    _run: run,
+    retortType: "retort",
   };
 
   // Only run the chat function if this module is the main module.
   setTimeout(() => {
-    if (returnedModule.scriptId === require.main?.exports?.scriptId) {
-      returnedModule.run();
+    if (returnedModule.retortId === require.main?.exports?.scriptId) {
+      returnedModule._run();
     }
   }, 0);
 
