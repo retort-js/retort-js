@@ -119,11 +119,6 @@ class RetortAgent extends RetortExtendableFunction {
 
 
   }
-  
-
-
-
-
 
   constructor(conversation: Conversation, inputSettings: Partial<RetortConfiguration>) {
     super();
@@ -144,7 +139,7 @@ class RetortAgent extends RetortExtendableFunction {
 
 const _RetortAgent = RetortAgent as unknown as AgentFunction & RetortAgent
 
-export {_RetortAgent as RetortAgent};
+export { _RetortAgent as RetortAgent };
 
 export function agent(conversation: Conversation, settings: Partial<RetortConfiguration>): RetortAgent {
   return new RetortAgent(conversation, settings);
