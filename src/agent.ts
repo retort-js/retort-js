@@ -56,11 +56,6 @@ interface AgentFunction {
 
   // assistant `Hello`
   (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
-
-  // assistant() 
-  // or 
-  // assistant({model: "gpt-5"})
-  (settings?: Partial<RetortConfiguration>): Promise<RetortMessage>;
 }
 
 interface AgentMembers {
@@ -133,6 +128,17 @@ class RetortAgent extends RetortExtendableFunction {
     };
 
     this.settings = settings = { ...settings, ...(inputSettings || {}) };;
+  }
+
+  async input(inputSettings?: Partial<RetortConfiguration>) {
+    return askQuestion("input: ").then(content => {
+      return new RetortMessage({ ...this.settings, ...inputSettings, content: content });
+    });
+  }
+
+  async generation(generationSettings?: Partial<RetortConfiguration>) {
+
+    return openAiChatCompletion({ ...this.settings, ...generationSettings }, this.conversation.messagePromises);
   }
 
 }
