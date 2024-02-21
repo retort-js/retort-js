@@ -1,29 +1,11 @@
 import { Conversation } from "./conversation";
+import { defineGeneration } from "./define-generation";
+import { defineInput } from "./define-input";
 import { RetortExtendableFunction } from "./extendable-function";
+import { logMessage } from "./log-message";
 import { RetortMessage, RetortValue, createTemplateTag, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
-
-function logMessage(message: RetortMessage) {
-
-  let color = '';
-  switch (message.role) {
-    case 'user':
-      color = '\x1b[34m'; // Blue
-      break;
-    case 'assistant':
-      color = '\x1b[32m'; // Green
-      break;
-    case 'system':
-      color = '\x1b[33m'; // Yellow
-      break;
-    default:
-      color = '\x1b[0m'; // Reset
-  }
-  const resetColor = '\x1b[0m';
-  const contentColor = '\x1b[37m'; // White
-  console.log(`\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`);
-}
 
 
 
@@ -130,22 +112,12 @@ class RetortAgent extends RetortExtendableFunction {
     this.settings = settings = { ...settings, ...(inputSettings || {}) };;
   }
 
-  input(inputSettings?: Partial<RetortConfiguration>) {
-    let m = askQuestion("input: ").then(content => {
-      return new RetortMessage({ ...this.settings, ...inputSettings, content: content });
-    });
-    this.conversation.messagePromises.push(m);
-    m.then(m => logMessage(m));
-    return m;
-  }
+  get input() {
+    return defineInput(this.conversation, () => this.settings, true)
+  };
 
-  generation(generationSettings?: Partial<RetortConfiguration>) {
-    let messagePromises = this.conversation.messagePromises.slice(0);
-
-    let m = openAiChatCompletion({ ...this.settings, ...generationSettings }, messagePromises);
-    this.conversation.messagePromises.push(m);
-    m.then(m => logMessage(m));
-    return m;
+  get generation() {
+    return defineGeneration(this.conversation, () => this.settings, true);
   }
 
 }
