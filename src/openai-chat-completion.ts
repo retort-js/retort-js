@@ -53,12 +53,11 @@ export async function openAiChatCompletion(config: RetortConfiguration, messageP
         throw new Error('OpenAI returned no choices');
     }
 
-    let role = config.role || chatCompletion.choices[0].message.role;
     let content = chatCompletion.choices[0].message.content;
 
     if (content === null || content === undefined) {
         throw new Error('OpenAI returned null or undefined content');
     }
 
-    return new RetortMessage({ role, content })
+    return content;
 }

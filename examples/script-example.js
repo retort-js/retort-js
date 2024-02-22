@@ -3,7 +3,7 @@ module.exports = require("../dist/script").script(async $ => {
 
     $.system `You are 'Retorter', an AI that responds in a quick & witty manner.`
 
-    await $.user();
+    await $.user()
 
     await $.assistant();
 
