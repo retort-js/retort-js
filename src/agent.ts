@@ -61,6 +61,8 @@ export type RetortRole = "user" | "assistant" | "system";
 
 export interface RetortSettings {
   model: string;
+  temperature: number;
+  topP: number;
 }
 
 

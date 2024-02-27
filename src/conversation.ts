@@ -17,6 +17,8 @@ export class RetortConversation extends RetortExtendableFunction {
 
     settings: RetortSettings = {
         model: "gpt-3.5-turbo",
+        temperature: 1,
+        topP: 1,
     };
 
     get messages(): RetortMessage[] {
