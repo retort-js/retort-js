@@ -1,12 +1,3 @@
-<style>
-.warning {
-    padding: 10px;
-    background-color: hsla(262.1, 83.3%, 57.8%, 0.2);
-    border-left: 6px solid hsl(262.1, 83.3%, 57.8%);
-    margin-bottom: 10px;
-}
-</style>
-
 # Retort-js
 
 ![NPM License](<https://img.shields.io/npm/l/retort-js?color=%09hsl(262%2C%2083%25%2C%2058%25)>)
@@ -39,8 +30,13 @@ You will need to add your own OpenAI api key.
 
 #### Api key setup
 
-<div class="warning">
-    <p>Note: Currently only setup to use with OpenAI's api.</p>
+<div style="padding: 10px;
+    background-color: hsla(262.1, 83.3%, 57.8%, 0.2);
+    border-left: 6px solid hsl(262.1, 83.3%, 57.8%);
+    margin-bottom: 10px;">
+
+Note: Currently only setup to use with OpenAI's api.
+
 </div>
 
 Add your OpenAi api key to the following environment variable:
