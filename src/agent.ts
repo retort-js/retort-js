@@ -59,7 +59,7 @@ export type RetortRole = "user" | "assistant" | "system";
 
 // export type RetortProvider = "openai";
 
-export interface RetortConfiguration {
+export interface RetortSettings {
   model: string;
 }
 

@@ -1,4 +1,4 @@
-import { RetortConfiguration, RetortRole } from "./agent";
+import { RetortSettings, RetortRole } from "./agent";
 import { id } from "./id";
 
 export class RetortMessage {

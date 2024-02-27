@@ -1,4 +1,4 @@
-import { RetortConfiguration, agent } from "./agent";
+import { RetortSettings, agent } from "./agent";
 import { RetortMessage, RetortValue } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
@@ -15,7 +15,7 @@ export class RetortConversation extends RetortExtendableFunction {
         return this.prompt;
     }
 
-    settings: RetortConfiguration = {
+    settings: RetortSettings = {
         model: "gpt-3.5-turbo",
     };
 

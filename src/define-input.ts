@@ -1,4 +1,4 @@
-import { RetortConfiguration, RetortRole } from "./agent";
+import { RetortSettings, RetortRole } from "./agent";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
@@ -8,7 +8,7 @@ import readline from "readline";
 export function defineInput(conversation: RetortConversation, role: RetortRole, push: boolean) {
 
 
-  return function input(inputSettings?: Partial<RetortConfiguration>) {
+  return function input(inputSettings?: Partial<RetortSettings>) {
     let m = askQuestion("input: ").then(content => {
       return new RetortMessage({ role, content });
     });

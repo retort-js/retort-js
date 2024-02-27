@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import { RetortConfiguration } from './agent';
+import { RetortSettings } from './agent';
 import { RetortMessage as RetortMessage } from './message';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index';
 
-export async function openAiChatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
+export async function openAiChatCompletion(config: RetortSettings, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
     const openai = new OpenAI({
         apiKey: process.env["OPENAI_API_KEY"],
     });

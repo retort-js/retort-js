@@ -1,5 +1,5 @@
 import { log } from "console";
-import { RetortConfiguration } from "./agent";
+import { RetortSettings } from "./agent";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage, RetortValue, isTemplateStringsArray, templateContent } from "./message";
