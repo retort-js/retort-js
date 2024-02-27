@@ -30,14 +30,7 @@ You will need to add your own OpenAI api key.
 
 #### Api key setup
 
-<div style="padding: 10px;
-    background-color: hsla(262.1, 83.3%, 57.8%, 0.2);
-    border-left: 6px solid hsl(262.1, 83.3%, 57.8%);
-    margin-bottom: 10px;">
-
-Note: Currently only setup to use with OpenAI's api.
-
-</div>
+> Note: Currently only setup to use with OpenAI's api.
 
 Add your OpenAi api key to the following environment variable:
 
