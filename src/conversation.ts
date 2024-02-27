@@ -21,6 +21,31 @@ export class RetortConversation extends RetortExtendableFunction {
         topP: 1,
     };
 
+    get model() {
+        return this.settings.model;
+    }
+
+    set model(value: string) {
+        this.settings.model = value;
+    }
+
+    get temperature() {
+        return this.settings.temperature;
+    }
+
+    set temperature(value: number) {
+        this.settings.temperature = value;
+    }
+
+    get topP() {
+        return this.settings.topP;
+    }
+
+    set topP(value: number) {
+        this.settings.topP = value;
+    }
+
+
     get messages(): RetortMessage[] {
         for (let m of this.messagePromises) {
             console.log("messagePromises", m, this.messagePromises)
