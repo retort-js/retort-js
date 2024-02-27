@@ -1,12 +1,12 @@
 import { log } from "console";
 import { RetortConfiguration } from "./agent";
-import { Conversation } from "./conversation";
+import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage, RetortValue, isTemplateStringsArray, templateContent } from "./message";
 import readline from "readline";
 
 
-export function definePrompt(conversation: Conversation, role: "user" | "assistant" | "system", push: boolean) {
+export function definePrompt(conversation: RetortConversation, role: "user" | "assistant" | "system", push: boolean) {
 
 
   return function prompt(value0: string | TemplateStringsArray, ...values: RetortValue[]) {

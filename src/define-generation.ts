@@ -1,12 +1,12 @@
 import { RetortConfiguration, RetortRole } from "./agent";
-import { Conversation } from "./conversation";
+import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import readline from "readline";
 import { openAiChatCompletion } from "./openai-chat-completion";
 
 
-export function defineGeneration(conversation: Conversation, role: RetortRole, push: boolean) {
+export function defineGeneration(conversation: RetortConversation, role: RetortRole, push: boolean) {
 
   return async function generation(generationSettings?: Partial<RetortConfiguration>) {
     let messagePromises = conversation.messagePromises.slice(0);

@@ -1,11 +1,11 @@
 import { RetortConfiguration, RetortRole } from "./agent";
-import { Conversation } from "./conversation";
+import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import readline from "readline";
 
 
-export function defineInput(conversation: Conversation, role: RetortRole, push: boolean) {
+export function defineInput(conversation: RetortConversation, role: RetortRole, push: boolean) {
 
 
   return function input(inputSettings?: Partial<RetortConfiguration>) {

@@ -6,7 +6,7 @@ import { defineInput } from "./define-input";
 import { defineGeneration } from "./define-generation";
 import { definePrompt } from "./define-prompt";
 
-export class Conversation extends RetortExtendableFunction {
+export class RetortConversation extends RetortExtendableFunction {
     readonly id = id("cnv");
     readonly chat = this;
     readonly messagePromises: (RetortMessage | Promise<RetortMessage>)[] = [];
@@ -46,7 +46,7 @@ export class Conversation extends RetortExtendableFunction {
 }
 
 
-export interface Conversation {
+export interface RetortConversation {
     (input: string): RetortMessage,
     (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage
 

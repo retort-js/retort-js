@@ -1,4 +1,4 @@
-import { Conversation } from "./conversation";
+import { RetortConversation } from "./conversation";
 import { defineGeneration } from "./define-generation";
 import { defineInput } from "./define-input";
 import { definePrompt } from "./define-prompt";
@@ -19,14 +19,14 @@ export interface RetortAgent {
 
 export class RetortAgent extends RetortExtendableFunction {
 
-  conversation: Conversation;
+  conversation: RetortConversation;
   role: RetortRole;
 
   __wrappedFunction(value0: string | TemplateStringsArray, ...values: RetortValue[]) {
     return this.prompt(value0, ...values);
   }
 
-  constructor(conversation: Conversation, role: RetortRole) {
+  constructor(conversation: RetortConversation, role: RetortRole) {
     super();
     this.conversation = conversation;
     this.role = role;
@@ -47,7 +47,7 @@ export class RetortAgent extends RetortExtendableFunction {
 
 }
 
-export function agent(conversation: Conversation, role: RetortRole): RetortAgent {
+export function agent(conversation: RetortConversation, role: RetortRole): RetortAgent {
   return new RetortAgent(conversation, role);
 }
 
