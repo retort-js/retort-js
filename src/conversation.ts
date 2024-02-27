@@ -1,5 +1,5 @@
 import { RetortConfiguration, agent } from "./agent";
-import { RetortMessage } from "./message";
+import { RetortMessage, RetortValue } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
 import { defineInput } from "./define-input";
@@ -10,6 +10,11 @@ export class Conversation extends RetortExtendableFunction {
     readonly id = id("cnv");
     readonly chat = this;
     readonly messagePromises: (RetortMessage | Promise<RetortMessage>)[] = [];
+
+    get __wrappedFunction() {
+        return this.prompt;
+    }
+
     settings: RetortConfiguration = {
         model: "gpt-3.5-turbo",
     };
@@ -39,3 +44,11 @@ export class Conversation extends RetortExtendableFunction {
         return definePrompt(this, "user", false);
     }
 }
+
+
+export interface Conversation {
+    (input: string): RetortMessage,
+    (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage
+
+}
+

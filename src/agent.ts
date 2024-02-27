@@ -8,31 +8,7 @@ import { RetortMessage, RetortValue, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
 
-
-
-
-function askQuestion(query: string): Promise<string> {
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise(resolve => {
-
-
-    return rl.question("\n" + query, ans => {
-      readline.moveCursor(process.stdout, 0, -2);
-      readline.clearScreenDown(process.stdout);
-
-      rl.close();
-
-      resolve(ans);
-    })
-  });
-}
-
-interface AgentFunction {
+export interface RetortAgent {
 
   // assistant ("Hello")
   (content: string): RetortMessage;
@@ -41,16 +17,7 @@ interface AgentFunction {
   (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
 }
 
-interface AgentMembers {
-  conversation: Conversation;
-  settings: RetortConfiguration;
-}
-
-export interface Agent extends AgentFunction, AgentMembers {
-
-}
-
-class RetortAgent extends RetortExtendableFunction {
+export class RetortAgent extends RetortExtendableFunction {
 
   conversation: Conversation;
   role: RetortRole;
@@ -80,21 +47,17 @@ class RetortAgent extends RetortExtendableFunction {
 
 }
 
-const _RetortAgent = RetortAgent as unknown as AgentFunction & RetortAgent
-
-export { _RetortAgent as RetortAgent };
-
 export function agent(conversation: Conversation, role: RetortRole): RetortAgent {
   return new RetortAgent(conversation, role);
 }
 
 
 
-export type RetortAction = "input" | "generation" | "answer" | "instruction";
+// export type RetortAction = "input" | "generation" | "answer" | "instruction";
 
 export type RetortRole = "user" | "assistant" | "system";
 
-export type RetortProvider = "openai";
+// export type RetortProvider = "openai";
 
 export interface RetortConfiguration {
   model: string;
