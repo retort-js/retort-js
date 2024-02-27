@@ -91,7 +91,7 @@ $.system("Write a haiku about LLMs (Large Language Models).");
 $.system`Write a haiku about LLMs (Large Language Models).`;
 ```
 
-### Examples
+# Examples
 
 A basic script that accepts user input:
 
@@ -151,7 +151,7 @@ retorter._run(); // Run the conversation
 
 ---
 
-### Vocabulary
+# Vocabulary
 
 | Term           | Description |
 | -------------- | ----------- |
@@ -161,6 +161,6 @@ retorter._run(); // Run the conversation
 | `messages`     | ...todo     |
 | `run`          | ...todo     |
 
-### Join our Community
+# Join our Community
 
 Join us in the Text Alchemy discord to share your experiences, ask questions and get help from the creators.
