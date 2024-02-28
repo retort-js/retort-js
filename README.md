@@ -134,7 +134,7 @@ The script will wait for your input into the console before calling the assistan
 Passing parameters to a conversation:
 
 ```js
-module.exports = require("retort-js").retort(async ($, age) => {
+module.exports = require("retort-js").retort(async ($, { age }) => {
   $.user`A birthday message for someone ${age} years old`;
 
   await $.assistant.generation();
@@ -156,6 +156,8 @@ module.exports = require("retort-js").retort(async ($) => {
 // script.rt.mjs
 import { RetortConversation } from "retort-js";
 import scriptExample from "./script-example.rt.mjs";
+
+
 
 await $.run(scriptExample);
 
