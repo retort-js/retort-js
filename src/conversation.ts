@@ -5,6 +5,12 @@ import { RetortExtendableFunction } from "./extendable-function";
 import { defineInput } from "./define-input";
 import { defineGeneration } from "./define-generation";
 import { definePrompt } from "./define-prompt";
+import { Retort, RetortInProgress } from "./retort";
+import { run } from "./run";
+
+export interface RetortScriptImport<T> {
+    default: Retort<T>;
+}
 
 export class RetortConversation extends RetortExtendableFunction {
     readonly id = id("cnv");
@@ -20,6 +26,8 @@ export class RetortConversation extends RetortExtendableFunction {
         temperature: 1,
         topP: 1,
     };
+
+    run = run;
 
     get model() {
         return this.settings.model;
