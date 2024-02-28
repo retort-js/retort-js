@@ -30,6 +30,7 @@ You will need to add your own OpenAI api key.
 
 #### Api key setup
 
+> [!NOTE]
 > Note: Currently only setup to use with OpenAI's api.
 
 Add your OpenAi api key to the following environment variable:
