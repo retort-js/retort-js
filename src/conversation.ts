@@ -86,4 +86,3 @@ export interface RetortConversation {
     (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage
 
 }
-

@@ -8,6 +8,9 @@ import { RetortMessage, RetortValue, isTemplateStringsArray } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import readline from "readline";
 
+// TODO - tell typescript that call, bind apply, etc are not important,
+// and should be ignored in intellisense.
+
 export interface RetortAgent {
 
   // assistant ("Hello")
