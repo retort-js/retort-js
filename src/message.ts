@@ -1,4 +1,4 @@
-import { RetortConfiguration, RetortRole } from "./agent";
+import { RetortSettings, RetortRole } from "./agent";
 import { id } from "./id";
 
 export class RetortMessage {
@@ -17,49 +17,46 @@ export type RetortValue = string | number | boolean | undefined | null | RetortM
 
 
 
-export function createTemplateTag(settings: RetortConfiguration) {
 
+export function templateContent(templateStrings: TemplateStringsArray, ...values: RetortValue[]): string {
 
-    return function templateTag(templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage {
+    // Get the strings in raw form.
+    let strings = templateStrings.raw.map(x => x);
 
-        // Get the strings in raw form.
-        let strings = templateStrings.raw.map(x => x);
+    // Remove carriage returns from strings.
+    strings = strings.map(str => str.replace(/\r/g, ""));
 
-        // Remove carriage returns from strings.
-        strings = strings.map(str => str.replace(/\r/g, ""));
+    // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
+    strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
 
-        // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
-        strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
+    // Remove any whitespace or tabs at the end of a line in each of the strings  - except that which is explicitly specified.
+    strings = strings.map(str => str.replace(/[^\S\r\n]+\n/g, "\n"));
 
-        // Remove any whitespace or tabs at the end of a line in each of the strings  - except that which is explicitly specified.
-        strings = strings.map(str => str.replace(/[^\S\r\n]+\n/g, "\n"));
+    // Remove leading whitespace from the first string, if any.
+    strings[0] = (strings[0] || "").trimStart();
 
-        // Remove leading whitespace from the first string, if any.
-        strings[0] = (strings[0] || "").trimStart();
+    // Remove trailing whitespace from the last string, if any.
+    strings[strings.length - 1] = (strings[strings.length - 1] || "").trimEnd();
 
-        // Remove trailing whitespace from the last string, if any.
-        strings[strings.length - 1] = (strings[strings.length - 1] || "").trimEnd();
+    // TODO: Allow \ to begin and end a line, to allow for indentation.
 
-        // TODO: Allow \ to begin and end a line, to allow for indentation.
-
-        // Now, finally, encode the strings.
-        strings = strings.map(str => String(str));
+    // Now, finally, encode the strings.
+    strings = strings.map(str => String(str));
 
 
 
 
-        let content = strings[0] || "";
+    let content = strings[0] || "";
 
-        for (let i = 1, l = templateStrings.length; i < l; i++) {
-            let val = (values[i - 1] || "");
+    for (let i = 1, l = templateStrings.length; i < l; i++) {
+        let val = (values[i - 1] || "");
 
-            content += val || "";
-            content += templateStrings[i] || "";
+        content += val || "";
+        content += templateStrings[i] || "";
 
-        }
-
-        return new RetortMessage({ ...settings, content });
     }
+
+    return content;
 }
 
 export function isTemplateStringsArray(templateStrings: TemplateStringsArray | unknown): templateStrings is TemplateStringsArray {
