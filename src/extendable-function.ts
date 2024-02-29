@@ -1,3 +1,4 @@
+// TODO - remove "any" typing from inherited calls.
 abstract class RetortExtendableFunction extends Function {
 
   // @ts-expect-error
