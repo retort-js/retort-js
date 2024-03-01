@@ -1,13 +1,16 @@
-import { retort } from "../dist/index.js";
+import { retort, run } from "../dist/index.js";
 
-const retorter = retort(async $ => {
+const retorter = retort(async ($) => {
+  $.system`You are 'Retorter', an AI that responds in a quick & witty manner.`;
 
-    $.system `You are 'Retorter', an AI that responds in a quick & witty manner.`
+  $.user("Birthday message for a friend");
 
-    await $.user.input()
+  await $.assistant.generation();
 
-    await $.assistant.generation();
-
+  return $;
 });
 
-retorter._run(); // Run the conversation
+
+run(retorter, null, { cache: true });
+
+// Run the conversation
