@@ -1,4 +1,4 @@
-import { Conversation } from "./conversation";
+import { RetortConversation } from "./conversation";
 import { id } from "./id";
 
 export interface Retort<T> {
@@ -9,7 +9,7 @@ export interface Retort<T> {
 
 export interface RetortInProgress<T> {
   retortId: string;
-  $: Conversation;
+  $: RetortConversation;
   completionPromise: Promise<T>;
 }
 
@@ -17,7 +17,7 @@ export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
   let retortId = id("retort");
 
   let run = (...values: any[]): RetortInProgress<T> => {
-    const conversation = new Conversation();
+    const conversation = new RetortConversation();
 
     async function runInner() {
       return chatFunction(conversation, ...values);
@@ -50,4 +50,4 @@ export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
   return returnedModule;
 }
 
-type ChatFunction<T> = ($: Conversation, ...values: any[]) => T;
+type ChatFunction<T> = ($: RetortConversation, ...values: any[]) => T;
