@@ -4,32 +4,20 @@ let FunctionLiar = Function as any as null;
 
 export class RetortExtendableFunction extends FunctionLiar {
 
-  // @ts-expect-error
-  private apply(this: Function, thisArg: any, argArray?: any): any;
-
-  // @ts-expect-error
-  private readonly name: string
-
-  // @ts-expect-error
-  private call(this: Function, thisArg: any, ...argArray: any[]): any;
-
-  // @ts-expect-error
-  private bind(this: Function, thisArg: any, ...argArray: any[]): any;
-
-  // @ts-expect-error
-  private readonly length: number;
-
+  // Hide all of the members of function so that they don't appear in intellisense.
+  private apply: any;
+  private name: any
+  private call: any;
+  private bind: any;
+  private length: any;
   private prototype: any;
-
-  // Non-standard extensions
   private arguments: any;
   private caller: any;
+  private toString: any;
 
-  // @ts-expect-error
-  private get constructor();
+  // @ts-ignore
+  private get constructor(): any;
 
-  // @ts-expect-error
-  private toString();
 
   constructor() {
     function _retortFunctionWrapper(): any {
