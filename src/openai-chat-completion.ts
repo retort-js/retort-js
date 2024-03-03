@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import { RetortConfiguration } from './agent';
+import { RetortSettings } from './agent';
 import { RetortMessage as RetortMessage } from './message';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index';
 
-export async function openAiChatCompletion(config: RetortConfiguration, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
+export async function openAiChatCompletion(settings: RetortSettings, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
     const openai = new OpenAI({
         apiKey: process.env["OPENAI_API_KEY"],
     });
@@ -20,7 +20,7 @@ export async function openAiChatCompletion(config: RetortConfiguration, messageP
     const chatCompletion = await openai.chat.completions.create({
         messages: messages,
 
-        model: config.model,
+        model: settings.model,
         frequency_penalty: undefined,
         function_call: undefined,
         functions: undefined,
@@ -40,12 +40,12 @@ export async function openAiChatCompletion(config: RetortConfiguration, messageP
 
         stop: undefined,
         stream: undefined,
-        temperature: undefined,
+        temperature: settings.temperature,
 
         tool_choice: undefined,
         tools: undefined,
         top_logprobs: undefined,
-        top_p: undefined,
+        top_p: settings.topP,
         user: undefined,
     });
 
@@ -53,12 +53,11 @@ export async function openAiChatCompletion(config: RetortConfiguration, messageP
         throw new Error('OpenAI returned no choices');
     }
 
-    let role = config.role || chatCompletion.choices[0].message.role;
     let content = chatCompletion.choices[0].message.content;
 
     if (content === null || content === undefined) {
         throw new Error('OpenAI returned null or undefined content');
     }
 
-    return new RetortMessage({ role, content })
+    return content;
 }
