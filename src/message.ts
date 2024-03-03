@@ -29,11 +29,11 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
     strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
 
-    // Allow line continuations.
-    strings = strings.map(str => str.replace(/(?<!\\)\\[^\S\n]\n/g, ""));
-
     // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
     strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
+
+    // Allow line continuations.
+    strings = strings.map(str => str.replace(/(?<!\\)\\[^\S\n]\n/g, ""));
 
     // Remove leading whitespace from the first string, if any.
     strings[0] = (strings[0] || "").trimStart();
