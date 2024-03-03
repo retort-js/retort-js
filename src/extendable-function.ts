@@ -1,5 +1,8 @@
-// TODO - remove "any" typing from inherited calls.
-abstract class RetortExtendableFunction extends Function {
+
+// FunctionLiar removes "any" typing from inherited calls.
+let FunctionLiar = Function as any as typeof Object;
+
+abstract class RetortExtendableFunction extends FunctionLiar {
 
   // @ts-expect-error
   constructor() {
@@ -16,6 +19,5 @@ abstract class RetortExtendableFunction extends Function {
     return Object.setPrototypeOf(self, new.target.prototype);
   }
 }
-
 
 export { RetortExtendableFunction }
