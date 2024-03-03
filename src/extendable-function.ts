@@ -1,10 +1,36 @@
 
 // FunctionLiar removes "any" typing from inherited calls.
-let FunctionLiar = Function as any as typeof Object;
+let FunctionLiar = Function as any as null;
 
-abstract class RetortExtendableFunction extends FunctionLiar {
+export class RetortExtendableFunction extends FunctionLiar {
 
   // @ts-expect-error
+  private apply(this: Function, thisArg: any, argArray?: any): any;
+
+  // @ts-expect-error
+  private readonly name: string
+
+  // @ts-expect-error
+  private call(this: Function, thisArg: any, ...argArray: any[]): any;
+
+  // @ts-expect-error
+  private bind(this: Function, thisArg: any, ...argArray: any[]): any;
+
+  // @ts-expect-error
+  private readonly length: number;
+
+  private prototype: any;
+
+  // Non-standard extensions
+  private arguments: any;
+  private caller: any;
+
+  // @ts-expect-error
+  private get constructor();
+
+  // @ts-expect-error
+  private toString();
+
   constructor() {
     function _retortFunctionWrapper(): any {
       const self = _retortFunctionWrapper as any;
@@ -19,5 +45,3 @@ abstract class RetortExtendableFunction extends FunctionLiar {
     return Object.setPrototypeOf(self, new.target.prototype);
   }
 }
-
-export { RetortExtendableFunction }
