@@ -20,6 +20,7 @@ export type RetortValue = string | number | boolean | undefined | null | RetortM
 
 export function templateContent(templateStrings: TemplateStringsArray, ...values: RetortValue[]): string {
 
+
     // Get the strings in raw form.
     let strings = templateStrings.raw.map(x => x);
 
@@ -41,22 +42,21 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     // Remove trailing whitespace from the last string, if any.
     strings[strings.length - 1] = (strings[strings.length - 1] || "").trimEnd();
 
-
     // Now, finally, encode the strings.
     strings = strings.map(str => unescape(str));
 
 
 
-
     let content = strings[0] || "";
 
-    for (let i = 1, l = templateStrings.length; i < l; i++) {
+    for (let i = 1, l = strings.length; i < l; i++) {
         let val = (values[i - 1] || "");
 
         content += val || "";
-        content += templateStrings[i] || "";
 
+        content += strings[i] || "";
     }
+
 
     return content;
 }

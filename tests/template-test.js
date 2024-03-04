@@ -22,11 +22,11 @@ let m1 = $`
 assert(m1 , "TEST", "Multiline template strings should be trimmed");
 
 let m2 = $`  
-    TEST  
-    
-    TEST
+    TEST1  
+                       
+    TEST2
 `;
-assert(m2 , "TEST\n\nTEST", "Multiline template strings should preseve newlines, but not other whitespace");
+assert(m2 , "TEST1\n\nTEST2", "Multiline template strings should preseve newlines, but not other whitespace");
 
 
 assert($`\\\\\n\t\\` , "\\\\\n\t\\", "Conventional escape strings should work");
@@ -41,10 +41,10 @@ assert(m3 , "TEST", "Line continuations should work")
 
 
 let m4 = $`
-    TEST \
-    TEST
+    TEST1 \
+    TEST2
 `
-assert(m4 , "TEST TEST", "Line continuations should preserve spaces")
+assert(m4 , "TEST1 TEST2", "Line continuations should preserve spaces")
 
 assert($`${"TEST"}` , "TEST", "String insertions work")
 
@@ -56,7 +56,7 @@ assert($`${null}` , "", "Null insertions are empty")
 
 assert($`${"TEST"}` , "TEST", "String insertions work")
 
-assert($` ${"TEST"} TEST ${"TEST"} ` , "TEST TEST TEST", "String insertions aren't trimmed out ")
+assert($` ${"TEST1"} TEST2 ${"TEST3"} ` , "TEST1 TEST2 TEST3", "String insertions trimming works.")
 
 //@ts-ignore
 assert(throws(() => $`${new Object()}`), "Object insertions throw")
