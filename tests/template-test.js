@@ -46,6 +46,32 @@ let m4 = $`
 `
 assert(m4 , "TEST1 TEST2", "Line continuations should preserve spaces")
 
+let m4b = $`
+    TEST1 \\
+    TEST2
+`
+assert(m4b, "TEST1 \\\nTEST2", "Line continuations should handle 2 backslashes properly ")
+
+let m4c = $`
+    TEST1 \\\
+    TEST2
+`
+assert(m4c , "TEST1 \\TEST2", "Line continuations should handle 3 backslashes properly ")
+
+let m4d = $`
+    TEST1 \\\\
+    TEST2
+`
+assert(m4d , "TEST1 \\\\\nTEST2", "Line continuations should handle 4 backslashes properly ")
+
+let m4e = $`
+    TEST1 \\\\\
+    TEST2
+`
+assert(m4e , "TEST1 \\\\TEST2", "Line continuations should handle 5 backslashes properly ")
+
+
+
 assert($`${"TEST"}` , "TEST", "String insertions work")
 
 assert($`${1}` , "1", "Number insertions work")

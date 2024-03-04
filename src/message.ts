@@ -34,7 +34,7 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     strings = strings.map(str => str.replace(/[^\S\r\n]+\n/g, "\n"));
 
     // Allow line continuations. TODO: Allow line continuations with an even number of preceding backslashes.
-    strings = strings.map(str => str.replace(/(?<!\\)\\\n/g, ""));
+    strings = strings.map(str => str.replace(/(?<!\\)((?:\\\\)*)\\\n/g, "$1"));
 
     // Remove leading whitespace from the first string, if any.
     strings[0] = (strings[0] || "").trimStart();
