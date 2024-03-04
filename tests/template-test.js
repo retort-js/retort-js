@@ -13,6 +13,17 @@ let throws = (func) => {
     return threw;
 }
 
+assert($`` , "", "Empty string should work");
+assert($`\n` , "\n", "Explicit newlines should be preserved");
+assert($`\t` , "\t", "Explicit tabs should be preserved");
+assert($` ` , "", "Single space should be stripped");
+
+let m0 = $`
+`;
+
+assert(m0, "", "Explicit newlines should be eliminated");
+
+
 assert($`TEST` , "TEST", "Simple template strings should work");
 assert($`  TEST  ` , "TEST", "Single-line template strings should be trimmed");
 
