@@ -29,8 +29,8 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
     strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
 
-    // Remove any whitespace at the start of a line in each of the strings - except that which is explicitly specified.
-    strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
+    // Remove any whitespace at the end of a line in each of the strings - except that which is explicitly specified.
+    strings = strings.map(str => str.replace(/[^\S\r\n]+\n/g, "\n"));
 
     // Allow line continuations. TODO: Allow line continuations with an even number of preceding backslashes.
     strings = strings.map(str => str.replace(/(?<!\\)\\\n/g, ""));
