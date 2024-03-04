@@ -57,7 +57,9 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
         if (currentValue === undefined) {
             throw new Error("Undefined passed to retort template")
         } else if (typeof currentValue === "object") {
-            throw new Error("Object passed to retort template")
+            // TODO: Messages being inserted.
+            // TODO: Conversations being inserted.
+            throw new Error("Unknown object passed to retort template")
         } else if (typeof currentValue === "function") {
             throw new Error("Function passed to retort template")
         } else if (typeof currentValue === "symbol") {
