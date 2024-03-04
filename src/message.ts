@@ -33,7 +33,7 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     strings = strings.map(str => str.replace(/\n[^\S\r\n]+/g, "\n"));
 
     // Allow line continuations. TODO: Allow line continuations with an even number of preceding backslashes.
-    strings = strings.map(str => str.replace(/(?<!\\)\\[^\S\n]\n/g, ""));
+    strings = strings.map(str => str.replace(/(?<!\\)\\\n/g, ""));
 
     // Remove leading whitespace from the first string, if any.
     strings[0] = (strings[0] || "").trimStart();
@@ -68,7 +68,6 @@ export function isTemplateStringsArray(templateStrings: TemplateStringsArray | u
 
 export function unescape(str: string) {
     let segments = str.split(/(\\\x[a-fA-F0-9]{2}|\\\u[a-fA-F0-9]{4}|\\\u\{[a-fA-F0-9]{1,6}\}|\\.)/g).filter(x => x);
-
     return segments.map(unescapeSegment).join("");
 }
 
