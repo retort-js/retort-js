@@ -41,7 +41,6 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     // Remove trailing whitespace from the last string, if any.
     strings[strings.length - 1] = (strings[strings.length - 1] || "").trimEnd();
 
-    // TODO: Allow \ to begin and end a line, to allow for indentation.
 
     // Now, finally, encode the strings.
     strings = strings.map(str => unescape(str));
