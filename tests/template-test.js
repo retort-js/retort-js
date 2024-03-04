@@ -96,10 +96,10 @@ assert($`${"TEST"}` , "TEST", "String insertions work")
 assert($` ${"TEST1"} TEST2 ${"TEST3"} ` , "TEST1 TEST2 TEST3", "String insertions trimming works.")
 
 //@ts-ignore
-assert(throws(() => $`${new Object()}`), "Object insertions throw")
+assert(throws(() => $`${new Object()}`), true, "Object insertions throw")
 
 //@ts-ignore
-assert(throws(() => $`${undefined}`), "Undefined insertions throw")
+assert(throws(() => $`${undefined}`), true, "Undefined insertions throw")
 
 //@ts-ignore
-assert(throws(() => $`${new Function()}`), "Function insertions throw")
+assert(throws(() => $`${new Function()}`), true, "Function insertions throw")

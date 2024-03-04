@@ -50,9 +50,37 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
     let content = strings[0] || "";
 
     for (let i = 1, l = strings.length; i < l; i++) {
-        let val = (values[i - 1] || "");
+        let currentValue = values[i - 1];
 
-        content += val || "";
+        let insertion = "";
+
+        if (currentValue === undefined) {
+            throw new Error("Undefined passed to retort template")
+        } else if (typeof currentValue === "object") {
+            throw new Error("Object passed to retort template")
+        } else if (typeof currentValue === "function") {
+            throw new Error("Function passed to retort template")
+        } else if (typeof currentValue === "symbol") {
+            throw new Error("Symbol passed to retort template")
+        } else if (typeof currentValue === "bigint") {
+            throw new Error("BigInt not yet supported")
+        } else if (typeof currentValue === null) {
+            insertion = "";
+        } else if (typeof currentValue === "number") {
+            insertion = currentValue.toString();
+        } else if (typeof currentValue === "string") {
+            insertion = currentValue;
+        } else if (typeof currentValue === "boolean") {
+            insertion = currentValue.toString();
+        } else {
+            throw new Error("Unsupported value inserted into template")
+        }
+
+
+
+
+
+        content += insertion;
 
         content += strings[i] || "";
     }
