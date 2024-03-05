@@ -54,7 +54,7 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
 
         let insertion = "";
 
-        if (typeof currentValue === null) {
+        if (currentValue === null) {
             insertion = "";
         } else if (typeof currentValue === "number") {
             insertion = currentValue.toString();
