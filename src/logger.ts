@@ -23,12 +23,12 @@ const createHash = (string: string) => {
   return hash.digest("hex");
 };
 
-const getFilePathToCache = () => {
-  return path.join(process.cwd(), ".retort-data/cache");
+const getFilePathToLog = () => {
+  return path.join(process.cwd(), ".retort-data/log");
 };
 
-const tryGetFromCache = (hash: string) => {
-  const retortFolder = getFilePathToCache();
+const tryGetFromLog = (hash: string) => {
+  const retortFolder = getFilePathToLog();
 
   if (!fs.existsSync(retortFolder)) {
     fs.mkdirSync(retortFolder, { recursive: true });
@@ -49,8 +49,8 @@ const tryGetFromCache = (hash: string) => {
   return undefined;
 };
 
-const saveToCache = (hash: string, obj: any) => {
-  const retortFolder = getFilePathToCache();
+const logScript = (hash: string, obj: any) => {
+  const retortFolder = getFilePathToLog();
 
   if (!fs.existsSync(retortFolder)) {
     fs.mkdirSync(retortFolder);
@@ -63,7 +63,13 @@ const saveToCache = (hash: string, obj: any) => {
   if (obj instanceof RetortConversation) {
     serializedMessages = JSON.stringify(obj.toObject(), null, 2);
   } else {
-    serializedMessages = JSON.stringify(obj, null, 2);
+    try {
+      serializedMessages = JSON.stringify(obj, null, 2);
+
+    } catch (e) {
+      console.error("Error serializing script", e);
+      throw new Error("Error serializing script");
+    }
   }
 
   // Write the serialized array a file in the .retort folder
@@ -77,4 +83,4 @@ const saveToCache = (hash: string, obj: any) => {
   return serializedMessages;
 };
 
-export { createHash, tryGetFromCache, saveToCache };
+export { createHash, tryGetFromLog, logScript };

@@ -10,7 +10,6 @@ const retorter = retort(async ($) => {
   return $;
 });
 
-
-run(retorter, null, { cache: true });
+run(retorter, null, { shouldUseCache: true });
 
 // Run the conversation
