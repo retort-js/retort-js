@@ -1,5 +1,7 @@
 
 let $ = require("../dist/message").templateContent;
+let RetortMessage = require("../dist/message").RetortMessage;
+
 let assert = (a, b, message = "") => console.assert(a === b, `${JSON.stringify(a)} !== ${JSON.stringify(b)}; ${message}`);
 
 let throws = (func) => {
@@ -17,6 +19,8 @@ assert($`` , "", "Empty string should work");
 assert($`\n` , "\n", "Explicit newlines should be preserved");
 assert($`\t` , "\t", "Explicit tabs should be preserved");
 assert($` ` , "", "Single space should be stripped");
+
+
 
 let m0 = $`
 `;
@@ -103,3 +107,5 @@ assert(throws(() => $`${undefined}`), true, "Undefined insertions throw")
 
 //@ts-ignore
 assert(throws(() => $`${new Function()}`), true, "Function insertions throw")
+
+assert($`${new RetortMessage({role: "user", content: "TEST"})}` , "TEST", "Retort messages are inserted");
