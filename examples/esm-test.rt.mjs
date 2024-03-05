@@ -6,10 +6,8 @@ const retorter = retort(async ($) => {
   $.user("Birthday message for a friend");
 
   await $.assistant.generation();
-
-  return $;
 });
 
-run(retorter, null, { shouldUseCache: true });
+// TODO: esm scripts need to call run() to execute the retorter
+// run(retorter, null, { shouldSaveToLog: true, shouldUseCache: false });
 
-// Run the conversation
