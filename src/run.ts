@@ -43,7 +43,8 @@ export async function run<T>(
   if (!awaitedCompletionPromise) {
     const resolvedRetort = await retortInProgress;
     const messages = await Promise.all(resolvedRetort.$.messagePromises);
-    logScript(retort.retortHash, messages);
+    const { id, settings } = resolvedRetort.$;
+    logScript(retort.retortHash, { id, settings, messages });
     return awaitedCompletionPromise;
   }
 
