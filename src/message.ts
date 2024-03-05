@@ -54,19 +54,7 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
 
         let insertion = "";
 
-        if (currentValue === undefined) {
-            throw new Error("Undefined passed to retort template")
-        } else if (typeof currentValue === "object") {
-            // TODO: Messages being inserted.
-            // TODO: Conversations being inserted.
-            throw new Error("Unknown object passed to retort template")
-        } else if (typeof currentValue === "function") {
-            throw new Error("Function passed to retort template")
-        } else if (typeof currentValue === "symbol") {
-            throw new Error("Symbol passed to retort template")
-        } else if (typeof currentValue === "bigint") {
-            throw new Error("BigInt not yet supported")
-        } else if (typeof currentValue === null) {
+        if (typeof currentValue === null) {
             insertion = "";
         } else if (typeof currentValue === "number") {
             insertion = currentValue.toString();
@@ -74,10 +62,30 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
             insertion = currentValue;
         } else if (typeof currentValue === "boolean") {
             insertion = currentValue.toString();
-        } else {
+        } else if (typeof currentValue === "object") {
+            console.log(currentValue)
+            if (currentValue instanceof RetortMessage) {
+                insertion = currentValue.content;
+            }
+            else {
+                throw new Error("Unknown object passed to retort template")
+            }
+
+            // TODO: Messages being inserted.
+            // TODO: Conversations being inserted.
+
+        } else if (currentValue === undefined) {
+            throw new Error("Undefined passed to retort template")
+        } else if (typeof currentValue === "function") {
+            throw new Error("Function passed to retort template")
+        } else if (typeof currentValue === "symbol") {
+            throw new Error("Symbol passed to retort template")
+        } else if (typeof currentValue === "bigint") {
+            throw new Error("BigInt not yet supported")
+        }
+        else {
             throw new Error("Unsupported value inserted into template")
         }
-
 
 
 
