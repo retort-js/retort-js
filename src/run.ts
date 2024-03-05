@@ -33,13 +33,10 @@ export async function run<T>(promiseOrRetort: Promise<RetortScriptImport<T>> | R
   
   if (options.cache) {
       if (returnedCompletionPromise instanceof RetortConversation) {
-        Promise.all(returnedCompletionPromise.messagePromises).then((messages) => {          
-          // TODO: this overwrites the file with the same hash, should we append or create a new file for each run?
-          saveToCache(retort.retortHash, returnedCompletionPromise);
-        });
-      } else {
-        saveToCache(retort.retortHash, returnedCompletionPromise);
+        await Promise.all(returnedCompletionPromise.messagePromises);
       }
+      saveToCache(retort.retortHash, returnedCompletionPromise);    
+      // THIS WILL OVERWRITE THE CURRENT CACHED RUN.       
     }
 
     return returnedCompletionPromise;
