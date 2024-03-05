@@ -63,7 +63,7 @@ export function templateContent(templateStrings: TemplateStringsArray, ...values
         } else if (typeof currentValue === "boolean") {
             insertion = currentValue.toString();
         } else if (typeof currentValue === "object") {
-            console.log(currentValue)
+            
             if (currentValue instanceof RetortMessage) {
                 insertion = currentValue.content;
             }
