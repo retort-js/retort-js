@@ -8,4 +8,4 @@ module.exports = require("../dist/index.js").retort(async $ => {
 
     await $.assistant.generation();
 
-});
+})._run();

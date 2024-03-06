@@ -11,6 +11,12 @@ export class RetortMessage {
         this.content = content;
     }
 
+    async streamContent(stream: AsyncIterable<string>) {
+        for await (const chunk of stream) {
+            this.content += chunk;
+        }
+    }
+
 }
 
 export type RetortValue = string | number | boolean | undefined | null | RetortMessage;

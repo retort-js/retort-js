@@ -1,63 +1,80 @@
-import OpenAI from 'openai';
-import { RetortSettings } from './agent';
-import { RetortMessage as RetortMessage } from './message';
-import { ChatCompletionMessageParam } from 'openai/resources/chat/index';
+import OpenAI from "openai";
+import { RetortSettings } from "./agent";
+import { RetortMessage as RetortMessage } from "./message";
+import { ChatCompletionMessageParam } from "openai/resources/chat/index";
 
-export async function openAiChatCompletion(settings: RetortSettings, messagePromises: (RetortMessage | Promise<RetortMessage>)[]) {
-    const openai = new OpenAI({
-        apiKey: process.env["OPENAI_API_KEY"],
+export async function* openAiChatCompletion(
+  settings: RetortSettings,
+  messagePromises: (RetortMessage | Promise<RetortMessage>)[]
+) {
+  const openai = new OpenAI({
+    apiKey: process.env["OPENAI_API_KEY"],
+  });
+
+  let messages = [] as ChatCompletionMessageParam[];
+
+  for await (let m of messagePromises) {
+    messages.push({
+      content: m.content,
+      role: m.role,
     });
+  }
 
-    let messages = [] as ChatCompletionMessageParam[];
+  let isSteaming = true;
 
-    for await (let m of messagePromises) {
-        messages.push({
-            content: m.content,
-            role: m.role,
-        });
-    }
+  const chatCompletion = await openai.chat.completions.create({
+    messages: messages,
 
-    const chatCompletion = await openai.chat.completions.create({
-        messages: messages,
+    model: settings.model,
+    frequency_penalty: undefined,
+    function_call: undefined,
+    functions: undefined,
+    logit_bias: undefined,
 
-        model: settings.model,
-        frequency_penalty: undefined,
-        function_call: undefined,
-        functions: undefined,
-        logit_bias: undefined,
+    logprobs: undefined,
+    max_tokens: undefined,
 
+    n: undefined,
 
-        logprobs: undefined,
-        max_tokens: undefined,
+    presence_penalty: undefined,
 
-        n: undefined,
+    response_format: undefined,
 
-        presence_penalty: undefined,
+    seed: undefined,
 
-        response_format: undefined,
+    stop: undefined,
+    stream: isSteaming,
+    temperature: settings.temperature,
 
-        seed: undefined,
+    tool_choice: undefined,
+    tools: undefined,
+    top_logprobs: undefined,
+    top_p: settings.topP,
+    user: undefined,
+  });
 
-        stop: undefined,
-        stream: undefined,
-        temperature: settings.temperature,
+  // if (!isSteaming) {
 
-        tool_choice: undefined,
-        tools: undefined,
-        top_logprobs: undefined,
-        top_p: settings.topP,
-        user: undefined,
-    });
+  //     if (!chatCompletion.choices[0]) {
+  //         throw new Error('OpenAI returned no choices');
+  //     }
 
-    if (!chatCompletion.choices[0]) {
-        throw new Error('OpenAI returned no choices');
-    }
+  //     let content = chatCompletion.choices[0].message.content;
 
-    let content = chatCompletion.choices[0].message.content;
+  //     if (content === null || content === undefined) {
+  //         throw new Error('OpenAI returned null or undefined content');
+  //     }
 
-    if (content === null || content === undefined) {
-        throw new Error('OpenAI returned null or undefined content');
-    }
+  //     return content
+  // }
 
-    return content;
+  let content;
+
+  for await (const chunk of chatCompletion) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    // process.stdout.write(content);
+    yield content;
+  }
+
+  // return content!;
 }
