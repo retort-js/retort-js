@@ -2,6 +2,24 @@
 let $ = require("../dist/message").templateContent;
 let RetortMessage = require("../dist/message").RetortMessage;
 
+
+$`
+
+The text is trimmed. So it starts with "The" always.
+    It's chomped - indentation is ignored.
+    ${"-"}     But you can do lots of spaces in the middle of a line     ${"-"}
+    ${""}      Even the empty string can start or end a line            ${""}
+    \tIf you want to start a line with a tab, use \t.
+    \sIf you want to start a line with a space, use \s.
+    You can also do \
+        line continuations with a backslash. (This will be one line)
+    Leading and trailing space are ignored.
+    Future feature:
+    ${{reportData: "Report-data-goes-here"}}
+
+`
+
+
 let assert = (a, b, message = "") => console.assert(a === b, `${JSON.stringify(a)} !== ${JSON.stringify(b)}; ${message}`);
 
 let throws = (func) => {
