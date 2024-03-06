@@ -1,4 +1,4 @@
-# Retort-js
+# RetortJS
 
 ![NPM License](<https://img.shields.io/npm/l/retort-js?color=%09hsl(262%2C%2083%25%2C%2058%25)>)
 
