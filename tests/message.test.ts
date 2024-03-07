@@ -54,6 +54,27 @@ describe("templateContent function", () => {
     expect($`\\\\\n\t\\`).toBe("\\\\\n\t\\");
   });
 
+  it("Conventional escape strings should work", () => {
+    expect($`\\\\\n\t\\`).toBe("\\\\\n\t\\");
+  });
+
+  it("Conventional escape strings should work", () => {
+    expect($`\\\\\n\t\\`).toBe("\\\\\n\t\\");
+  });
+
+  it("Latin-1 escapes should work", () => {
+    expect($`\x72\x65\x74\x6f\x72\x74`).toBe("retort");
+  });
+
+  it("Unicode escapes should work", () => {
+    expect($`\u0072\u0065\u0074\u006f\u0072\u0074`).toBe("retort");
+  });
+  
+  it("Escapes outside multilingual plane should work", () => {
+    expect($`\u{1F76D}`).toBe("\u{1F76D}");
+  });
+  
+
   it("Space escape strings should work", () => {
     expect($`\s`).toBe(" ");
   });
@@ -146,4 +167,6 @@ describe("templateContent function", () => {
       "TEST"
     );
   });
+
+  
 });
