@@ -1,4 +1,6 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.test.ts", "**/*.ts"]
+  "include": ["**/*.test.ts", "**/*.ts"],
+  // override the "exclude" property from the parent configuration
+  "exclude": []
 }
