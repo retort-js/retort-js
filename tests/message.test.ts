@@ -9,7 +9,7 @@ describe("templateContent function", () => {
   });
 
   it("Explicit new lines should be preserved", () => {
-    expect($`\n`).toBe("\n"); // results in a literal \n
+    expect($`\n`).toBe("\n");
   });
 
   it("Explicit tabs should be preserved", () => {
