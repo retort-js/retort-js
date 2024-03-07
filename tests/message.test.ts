@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { templateContent as $ } from "dist/message";
-import { RetortMessage } from "dist/message";
-import { RetortValue } from "dist/message";
+import { templateContent as $ } from "../dist/message";
+import { RetortMessage } from "../dist/message";
+import { RetortValue } from "../dist/message";
 
 describe("templateContent function", () => {
   it("Empty string should work", () => {
