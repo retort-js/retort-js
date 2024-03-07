@@ -25,6 +25,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Add your build steps here
       - name: CI
         run: npm run ci
