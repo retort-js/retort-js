@@ -11,7 +11,8 @@
     "build": "tsc",
     "start": "ts-node src/index.ts",
     "test": "vitest run",
-    "test-watch": "vitest"
+    "test-watch": "vitest",
+    "ci": "npm run build && npm run test"
   },
   "keywords": [
     "Retort",
