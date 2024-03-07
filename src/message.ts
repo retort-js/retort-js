@@ -126,9 +126,6 @@ export function unescapeSegment(str: string) {
                     throw new Error(`Malformed unicode escape sequence; should be like "\\u{000000} or "\\u0000`);
                 }
 
-                console.log(str);
-                console.log(str.slice(3, -1))
-
 
                 return String.fromCodePoint(parseInt(str.slice(3, -1), 16));
             } else {
