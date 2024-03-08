@@ -1,9 +1,13 @@
-name: Build
+name: CI
 
 on:
-  push:
+  pull_request:
     branches:
       - "**"
+
+  push:
+    branches:
+      - "main"
 
 jobs:
   build:
@@ -16,11 +20,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "16.x"
+          node-version: "18.x"
 
       - name: Install dependencies
         run: npm install
 
-      # Add your build steps here
-      - name: Build
-        run: npm run build
+      - name: CI
+        run: npm run ci
