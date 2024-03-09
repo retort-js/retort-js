@@ -15,9 +15,7 @@ export class RetortExtendableFunction extends FunctionLiar {
   private caller: any;
   private toString: any;
   private [Symbol.hasInstance]: any;
-
-  // @ts-ignore
-  private get constructor(): any;
+  private ["constructor"]: any;
 
 
   constructor() {
