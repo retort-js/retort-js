@@ -53,6 +53,7 @@ export async function* openAiChatCompletion(
     user: undefined,
   });
 
+  let content = "";
   // if (!isSteaming) {
 
   //     if (!chatCompletion.choices[0]) {
@@ -68,13 +69,9 @@ export async function* openAiChatCompletion(
   //     return content
   // }
 
-  let content;
 
   for await (const chunk of chatCompletion) {
     const content = chunk.choices[0]?.delta?.content || "";
-    // process.stdout.write(content);
     yield content;
   }
-
-  // return content!;
 }

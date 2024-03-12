@@ -1,7 +1,7 @@
 import { log } from "console";
 import { RetortSettings, RetortRole } from "./agent";
 import { RetortConversation } from "./conversation";
-import { logMessage, logMessageStream } from "./log-message";
+import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 
@@ -17,15 +17,20 @@ export function defineGeneration(
 
     // let content = await openAiChatCompletion(conversation.settings, messagePromises);
     let message = new RetortMessage({ role, content: "" });
-    
+
+    let completionPromise = new Promise<RetortMessage>((resolve) => resolve(message));
+
+    if (push) {
+      messagePromises.push(completionPromise);
+    }
+
     await message.streamContent(
       openAiChatCompletion(conversation.settings, messagePromises)
     );
 
-    if (push) {
-      conversation.messagePromises.push(message);
-      logMessage(message);
-    }
+    await completionPromise;
+
+    logMessage(message);
 
     return message;
   };
