@@ -11,8 +11,11 @@ export class RetortMessage {
     this.content = content;
   }
 
+  currentStream: AsyncIterable<string> | null = null;
+
   async streamContent(stream: AsyncIterable<string>) {
     try {
+      this.currentStream = stream;
       for await (const chunk of stream) {
         this.content += chunk;
       }
