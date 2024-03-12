@@ -20,8 +20,6 @@ export async function* openAiChatCompletion(
     });
   }
 
-  let isSteaming = true;
-
   const chatCompletion = await openai.chat.completions.create({
     messages: messages,
 
@@ -43,7 +41,7 @@ export async function* openAiChatCompletion(
     seed: undefined,
 
     stop: undefined,
-    stream: isSteaming,
+    stream: true,
     temperature: settings.temperature,
 
     tool_choice: undefined,
