@@ -16,8 +16,9 @@ export interface RetortInProgress<T> {
 export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
   let retortId = id("retort");
 
-  let run = (...values: any[]): RetortInProgress<T> => {
+  let run = (autoHandleStreaming: boolean = true, ...values: any[]): RetortInProgress<T> => {
     const conversation = new RetortConversation();
+    conversation.settings.isStreaming = autoHandleStreaming;
 
     async function runInner() {
       return chatFunction(conversation, ...values);

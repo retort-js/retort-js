@@ -26,9 +26,16 @@ export function defineGeneration(
 
     let messagePromises = conversation.messagePromises.slice(0);
 
-    await message.streamContent(
-      openAiChatCompletion(conversation.settings, messagePromises)
-    );
+
+    if (conversation.settings.isStreaming) {
+      await message.streamContent(
+        openAiChatCompletion(conversation.settings, messagePromises)
+      );
+
+    } else {
+      message.currentStream = openAiChatCompletion(conversation.settings, messagePromises)
+    }
+
 
     await completionPromise;
 
