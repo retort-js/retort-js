@@ -13,16 +13,18 @@ export function defineGeneration(
   return async function generation(
     generationSettings?: Partial<RetortSettings>
   ) {
-    let messagePromises = conversation.messagePromises.slice(0);
-
     // let content = await openAiChatCompletion(conversation.settings, messagePromises);
     let message = new RetortMessage({ role, content: "" });
 
-    let completionPromise = new Promise<RetortMessage>((resolve) => resolve(message));
+    let completionPromise = new Promise<RetortMessage>((resolve) =>
+      resolve(message)
+    );
 
     if (push) {
-      messagePromises.push(completionPromise);
+      conversation.messagePromises.push(completionPromise);
     }
+
+    let messagePromises = conversation.messagePromises.slice(0);
 
     await message.streamContent(
       openAiChatCompletion(conversation.settings, messagePromises)
