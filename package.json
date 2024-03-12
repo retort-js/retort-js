@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "repository": {
-    "url": "https://github/retort-js/retort-js"
+    "url": "https://github.com/retort-js/retort-js"
   },
   "scripts": {
     "build": "tsc",
