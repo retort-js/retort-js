@@ -1,4 +1,3 @@
-import { log } from "console";
 import { RetortSettings, RetortRole } from "./agent";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
@@ -6,7 +5,7 @@ import { RetortMessage } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 
 export interface RetortMessagePromise extends Promise<RetortMessage> {
-  stream: AsyncIterable<string>;
+  stream: AsyncGenerator<string, void, unknown>;
 }
 
 export function defineGeneration(
@@ -15,31 +14,46 @@ export function defineGeneration(
   push: boolean
 ) {
   return function generation(generationSettings?: Partial<RetortSettings>) {
-    let messagePromises = conversation.messagePromises.slice(0);
+    let streams = conversation.messagePromises.slice(0);
 
     let currentStream = openAiChatCompletion(
       conversation.settings,
-      messagePromises
+      streams
     );
 
-    async function xxxx() {
-      let content = "";
-      for await (const chunk of currentStream) {
-        content += chunk;
-      }
+    let promiseResolver = (message: RetortMessage) => {};
+    let promiseRejecter = (error: unknown) => {};
 
-      let message = new RetortMessage({ role, content });
-      return message;
+    let newPromise = new Promise<RetortMessage>((resolve, reject) => {
+      promiseResolver = resolve;
+      promiseRejecter = reject;
+    }) as RetortMessagePromise;
+
+    async function* stream() {
+      try {
+        let content = "";
+        for await (const chunk of currentStream) {
+          content += chunk;
+          yield content;
+        }
+
+        let message = new RetortMessage({ role, content });
+        promiseResolver(message);
+      } catch (error) {
+        promiseRejecter(error);
+      }
     }
 
-    let promise = xxxx() as RetortMessagePromise;
-
-    promise.stream = currentStream;
+    newPromise.stream = stream();
 
     if (push) {
-      conversation.messagePromises.push(promise);
+      conversation.messagePromises.push(newPromise);
     }
 
-    return promise;
+    newPromise.then((message) => {
+      logMessage(message);
+    });
+
+    return newPromise;
   };
 }
