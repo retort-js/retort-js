@@ -5,42 +5,41 @@ import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 
+export interface RetortMessagePromise extends Promise<RetortMessage> {
+  stream: AsyncIterable<string>;
+}
+
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
 ) {
-  return async function generation(
-    generationSettings?: Partial<RetortSettings>
-  ) {
-    // let content = await openAiChatCompletion(conversation.settings, messagePromises);
-    let message = new RetortMessage({ role, content: "" });
-
-    let completionPromise = new Promise<RetortMessage>((resolve) =>
-      resolve(message)
-    );
-
-    if (push) {
-      conversation.messagePromises.push(completionPromise);
-    }
-
+  return function generation(generationSettings?: Partial<RetortSettings>) {
     let messagePromises = conversation.messagePromises.slice(0);
 
+    let currentStream = openAiChatCompletion(
+      conversation.settings,
+      messagePromises
+    );
 
-    if (conversation.settings.isStreaming) {
-      await message.streamContent(
-        openAiChatCompletion(conversation.settings, messagePromises)
-      );
+    async function xxxx() {
+      let content = "";
+      for await (const chunk of currentStream) {
+        content += chunk;
+      }
 
-    } else {
-      message.currentStream = openAiChatCompletion(conversation.settings, messagePromises)
+      let message = new RetortMessage({ role, content });
+      return message;
     }
 
+    let promise = xxxx() as RetortMessagePromise;
 
-    await completionPromise;
+    promise.stream = currentStream;
 
-    logMessage(message);
+    if (push) {
+      conversation.messagePromises.push(promise);
+    }
 
-    return message;
+    return promise;
   };
 }

@@ -66,7 +66,6 @@ export interface RetortSettings {
   model: string;
   temperature: number;
   topP: number;
-  isStreaming: boolean;
 }
 
 
