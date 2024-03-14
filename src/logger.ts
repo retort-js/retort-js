@@ -9,11 +9,33 @@ import {
 const isSerializableRetortConversation = (
   obj: any
 ): obj is SerializableRetortConversation => {
+  const isMessageValid = (message: any) => {
+    return (
+      typeof message === "object" &&
+      typeof message.content === "string" &&
+      typeof message.id === "string" &&
+      (message.role === "assistant" ||
+        message.role === "user" ||
+        message.role === "system")
+    );
+  };
+
+  const isSettingsValid = (settings: any) => {
+    return (
+      typeof settings === "object" &&
+      typeof settings.model === "string" &&
+      typeof settings.temperature === "number" &&
+      typeof settings.topP === "number"
+    );
+  };
+
   return (
     obj != null &&
     typeof obj.id === "string" &&
     typeof obj.settings === "object" &&
-    Array.isArray(obj.messages)
+    isSettingsValid(obj.settings) &&
+    Array.isArray(obj.messages) &&
+    obj.messages.every(isMessageValid)
   );
 };
 
@@ -65,14 +87,12 @@ const logScript = (hash: string, obj: any) => {
   } else {
     try {
       serializedMessages = JSON.stringify(obj, null, 2);
-
     } catch (e) {
       console.error("Error serializing script", e);
       throw new Error("Error serializing script");
     }
   }
 
-  // Write the serialized array a file in the .retort folder
   fs.writeFile(filePath, serializedMessages, (err) => {
     if (err) {
       throw new Error(err.message);
