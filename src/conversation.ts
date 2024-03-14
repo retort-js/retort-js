@@ -78,6 +78,22 @@ export class RetortConversation extends RetortExtendableFunction {
     get prompt() {
         return definePrompt(this, "user", false);
     }
+
+    toObject(messages: RetortMessage[] = this.messages): SerializableRetortConversation {
+        return {
+            id: this.id,
+            settings: this.settings,
+            messages,
+        }
+    }
+
+    // TODO: not sure this is right as we're losing the original id
+    static fromObject(obj: SerializableRetortConversation) {
+        const conversation = new RetortConversation();
+        conversation.settings = obj.settings;
+        conversation.messagePromises.push(...obj.messages);
+        return conversation;
+    }
 }
 
 
@@ -85,4 +101,10 @@ export interface RetortConversation {
     (input: string): RetortMessage,
     (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage
 
+}
+
+export interface SerializableRetortConversation {
+    id: string;
+    settings: RetortSettings;
+    messages: RetortMessage[];
 }
