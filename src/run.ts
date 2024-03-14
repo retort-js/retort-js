@@ -11,7 +11,6 @@ const defaultRunOptions: RunOptions = {
   shouldSaveToLog: true,
   shouldUseCache: false,
 };
-
 export async function run<T>(
   promiseOrRetort:
     | Promise<RetortScriptImport<T>>
