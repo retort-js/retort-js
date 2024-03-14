@@ -50,13 +50,13 @@ const tryGetFromLog = (hash: string) => {
 };
 
 const logScript = (hash: string, obj: any) => {
-  const retortFolder = getFilePathToLog();
+  const retortDataDir = getFilePathToLog();
 
-  if (!fs.existsSync(retortFolder)) {
-    fs.mkdirSync(retortFolder);
+  if (!fs.existsSync(retortDataDir)) {
+    fs.mkdirSync(retortDataDir, { recursive: true });
   }
 
-  const filePath = path.join(retortFolder, hash);
+  const filePath = path.join(retortDataDir, hash);
 
   let serializedMessages = "";
 
