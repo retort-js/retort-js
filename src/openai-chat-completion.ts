@@ -52,7 +52,6 @@ export async function* openAiChatCompletion(
   });
 
   let content = "";
-  // if (!isSteaming) {
 
   //     if (!chatCompletion.choices[0]) {
   //         throw new Error('OpenAI returned no choices');
@@ -65,8 +64,6 @@ export async function* openAiChatCompletion(
   //     }
 
   //     return content
-  // }
-
 
   for await (const chunk of chatCompletion) {
     const content = chunk.choices[0]?.delta?.content || "";
