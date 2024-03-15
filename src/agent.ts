@@ -25,7 +25,7 @@ export class RetortAgent extends RetortExtendableFunction {
   conversation: RetortConversation;
   role: RetortRole;
 
-  __wrappedFunction(value0: string | TemplateStringsArray, ...values: RetortValue[]) {
+  protected __wrappedFunction(value0: string | TemplateStringsArray, ...values: RetortValue[]) {
     return this.prompt(value0, ...values);
   }
 

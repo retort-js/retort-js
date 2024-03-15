@@ -17,7 +17,7 @@ export class RetortConversation extends RetortExtendableFunction {
     readonly chat = this;
     readonly messagePromises: (RetortMessage | Promise<RetortMessage>)[] = [];
 
-    get __wrappedFunction() {
+    protected get __wrappedFunction() {
         return this.prompt;
     }
 

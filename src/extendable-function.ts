@@ -1,7 +1,23 @@
-// TODO - remove "any" typing from inherited calls.
-abstract class RetortExtendableFunction extends Function {
 
-  // @ts-expect-error
+// FunctionLiar removes "any" typing from inherited calls.
+let FunctionLiar = Function as any as null;
+
+export class RetortExtendableFunction extends FunctionLiar {
+
+  // Hide all of the members of function so that they don't appear in intellisense.
+  private apply: any;
+  private name: any
+  private call: any;
+  private bind: any;
+  private length: any;
+  private prototype: any;
+  private arguments: any;
+  private caller: any;
+  private toString: any;
+  private [Symbol.hasInstance]: any;
+  private ["constructor"]: any;
+
+
   constructor() {
     function _retortFunctionWrapper(): any {
       const self = _retortFunctionWrapper as any;
@@ -16,6 +32,3 @@ abstract class RetortExtendableFunction extends Function {
     return Object.setPrototypeOf(self, new.target.prototype);
   }
 }
-
-
-export { RetortExtendableFunction }
