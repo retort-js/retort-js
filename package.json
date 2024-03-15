@@ -1,6 +1,6 @@
 {
   "name": "retort-js",
-  "version": "0.0.1-dev.15",
+  "version": "0.0.1-dev.16",
   "description": "Intuitive, production-ready prompt chaining in Javascript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
