@@ -6,7 +6,7 @@ import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import readline from "readline";
 
-const inputStore = new Map<string, (value: PromiseLike<RetortMessage>) => void>();
+const inputStore = new Map<string, (value: string) => void>();
 
 export function defineInput(
   conversation: RetortConversation,
@@ -17,7 +17,10 @@ export function defineInput(
     const inputId = id("input");
 
     let fromExternal = new Promise<RetortMessage>((resolve) => {
-      inputStore.set(inputId, resolve);
+      inputStore.set(inputId, (value: string) => {
+        resolve(new RetortMessage({ role, content: value }));
+      
+      });
     });
 
     let fromConsole = askQuestion("input: ", fromExternal).then((content) => {
