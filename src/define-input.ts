@@ -19,7 +19,6 @@ export function defineInput(
     let fromExternal = new Promise<RetortMessage>((resolve) => {
       inputStore.set(inputId, (value: string) => {
         resolve(new RetortMessage({ role, content: value }));
-      
       });
     });
 
@@ -42,10 +41,15 @@ function askQuestion(
   query: string,
   answeredElsewhere: Promise<RetortMessage>
 ): Promise<string> {
-  function cleanupConsole() {
-    readline.moveCursor(process.stdout, 0, -2);
-    readline.clearScreenDown(process.stdout);
-    rl.close();
+  let hasBeenCleanedUp = false;
+
+  function cleanupConsole(linesToCleanUp = 1) {
+    if (!hasBeenCleanedUp) {
+      hasBeenCleanedUp = true;
+      readline.moveCursor(process.stdout, 0, -linesToCleanUp);
+      readline.clearScreenDown(process.stdout);
+      rl.close();
+    }
   }
 
   const rl = readline.createInterface({
@@ -58,19 +62,19 @@ function askQuestion(
   return new Promise((resolve) => {
     answeredElsewhere.then((ans: RetortMessage) => {
       if (!resolved) {
-        cleanupConsole();
+        resolved = true;
+        cleanupConsole(1);
 
         resolve(ans.content);
-        resolved = true;
       }
     });
 
     rl.question("\n" + query, (ans) => {
       if (!resolved) {
-        cleanupConsole();
+        resolved = true;
+        cleanupConsole(2);
 
         resolve(ans);
-        resolved = true;
       }
     });
   });
