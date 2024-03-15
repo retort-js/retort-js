@@ -8,6 +8,13 @@ import readline from "readline";
 
 export const inputStore = new Map<string, (value: string) => void>();
 
+export interface RetortInputPromise extends Promise<RetortMessage> {
+  inputId: string;
+  retortType: "inputPromise";
+}
+
+
+
 export function defineInput(
   conversation: RetortConversation,
   role: RetortRole,
@@ -26,7 +33,9 @@ export function defineInput(
       return new RetortMessage({ role, content });
     });
 
-    let m = Promise.race([fromConsole, fromExternal]);
+    let m = Promise.race([fromConsole, fromExternal]) as RetortInputPromise;
+    m.inputId = inputId;
+    m.retortType = "inputPromise"
 
     if (push) {
       conversation.messagePromises.push(m);
