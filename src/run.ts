@@ -35,6 +35,16 @@ export async function run<T>(
 
   const awaitedCompletionPromise = await retortInProgress.completionPromise;
 
+  // when it runs into an input
+
+  // we'll need re-run and continue the conversation
+
+  //  on the server
+  // create an input id (global)
+  // create an input hook on the server
+
+
+
   if (!options.shouldSaveToLog) {
     return awaitedCompletionPromise;
   }
