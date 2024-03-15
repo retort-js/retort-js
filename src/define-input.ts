@@ -6,7 +6,7 @@ import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import readline from "readline";
 
-const inputStore = new Map<string, (value: string) => void>();
+export const inputStore = new Map<string, (value: string) => void>();
 
 export function defineInput(
   conversation: RetortConversation,
