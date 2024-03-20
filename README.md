@@ -32,7 +32,7 @@ npm i retort-js
 
 The quickest way to try Retort is in our playground:
 
-<a href="https://stackblitz.com/fork/github/retort-js/playground?file=retort%2Fscript-template.rt.js&hideNavigation=1&showSidebar=0" style="display: inline-block; background-color: #9146FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold">RetortJS Playground</a>
+<a href="https://stackblitz.com/fork/github/retort-js/playground?file=retort%2Fscript-template.rt.js&hideNavigation=1&showSidebar=0" style="display: inline-block; background-color: #9146FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold" target="_blank">RetortJS Playground</a>
 
 This will open a development project with an example script you can modify, and a UI where you can run your script and see the output of each message in the conversation. You will need to add your own OpenAI API key.
 
