@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { RetortSettings, RetortRole } from "./agent";
+import { RetortInputSettings, RetortRole } from "./agent";
 import { RetortConversation } from "./conversation";
 import { id } from "./id";
 import { logMessage } from "./log-message";
@@ -11,8 +11,8 @@ export const inputStore = new Map<string, (value: string) => void>();
 export interface RetortInputPromise extends Promise<RetortMessage> {
   inputId: string;
   retortType: "inputPromise";
+  inputQuery?: string;
 }
-
 
 
 export function defineInput(
@@ -20,8 +20,9 @@ export function defineInput(
   role: RetortRole,
   push: boolean
 ) {
-  return function input(inputSettings?: Partial<RetortSettings>) {
+  return function input(inputSettings?: Partial<RetortInputSettings>) {
     const inputId = id("input");
+    const inputQuery = inputSettings?.query;
 
     let fromExternal = new Promise<RetortMessage>((resolve) => {
       inputStore.set(inputId, (value: string) => {
@@ -29,13 +30,14 @@ export function defineInput(
       });
     });
 
-    let fromConsole = askQuestion("input: ", fromExternal).then((content) => {
+    let fromConsole = askQuestion((inputQuery ??  "input:").trim() + " ", fromExternal).then((content) => {
       return new RetortMessage({ role, content });
     });
 
     let m = Promise.race([fromConsole, fromExternal]) as RetortInputPromise;
     m.inputId = inputId;
     m.retortType = "inputPromise"
+    m.inputQuery = inputQuery;
 
     if (push) {
       conversation.messagePromises.push(m);
