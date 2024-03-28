@@ -22,7 +22,11 @@ export type RetortValue =
   | boolean
   | undefined
   | null
-  | RetortMessage;
+  | HasToString;
+
+interface HasToString {
+  toString(): string;
+}
 
 export function templateContent(
   templateStrings: TemplateStringsArray,
@@ -67,7 +71,7 @@ export function templateContent(
   return content;
 }
 
-function retortValueToString(currentValue: string | number | boolean | RetortMessage | null | undefined) {
+function retortValueToString(currentValue: RetortValue | any) {
   let insertion = "";
 
   if (currentValue === null) {
