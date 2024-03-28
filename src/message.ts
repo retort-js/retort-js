@@ -85,17 +85,11 @@ function retortValueToString(currentValue: string | number | boolean | RetortMes
     }
 
     insertion = currentValue.toString();
-    
+
   } else if (currentValue === undefined) {
     throw new Error("Undefined passed to retort template");
   } else if (typeof currentValue === "function") {
-    let currentVal = currentValue as Function; // Workaround for a seeming bug in typescript;
-
-    if (currentVal.toString === (() => { }).toString || currentVal.toString === function () { }.toString) {
-      throw new Error("Plain function passed to retort template");
-    }
-
-    insertion = currentVal.toString();
+    throw new Error("Function passed to retort template");
   } else if (typeof currentValue === "symbol") {
     throw new Error("Symbol passed to retort template");
   } else if (typeof currentValue === "bigint") {
