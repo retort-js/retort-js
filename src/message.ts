@@ -6,6 +6,10 @@ export class RetortMessage {
   role: RetortRole;
   content = "";
 
+  toString() {
+    return this.content;
+  }
+
   constructor({ role, content }: { role: RetortRole; content: string }) {
     this.role = role;
     this.content = content;
@@ -53,36 +57,7 @@ export function templateContent(
   for (let i = 1, l = strings.length; i < l; i++) {
     let currentValue = values[i - 1];
 
-    let insertion = "";
-
-    if (currentValue === null) {
-      insertion = "";
-    } else if (typeof currentValue === "number") {
-      insertion = currentValue.toString();
-    } else if (typeof currentValue === "string") {
-      insertion = currentValue;
-    } else if (typeof currentValue === "boolean") {
-      insertion = currentValue.toString();
-    } else if (typeof currentValue === "object") {
-      if (currentValue instanceof RetortMessage) {
-        insertion = currentValue.content;
-      } else {
-        throw new Error("Unknown object passed to retort template");
-      }
-
-      // TODO: Messages being inserted.
-      // TODO: Conversations being inserted.
-    } else if (currentValue === undefined) {
-      throw new Error("Undefined passed to retort template");
-    } else if (typeof currentValue === "function") {
-      throw new Error("Function passed to retort template");
-    } else if (typeof currentValue === "symbol") {
-      throw new Error("Symbol passed to retort template");
-    } else if (typeof currentValue === "bigint") {
-      throw new Error("BigInt not yet supported");
-    } else {
-      throw new Error("Unsupported value inserted into template");
-    }
+    let insertion = retortValueToString(currentValue);
 
     content += insertion;
 
@@ -90,6 +65,47 @@ export function templateContent(
   }
 
   return content;
+}
+
+function retortValueToString(currentValue: string | number | boolean | RetortMessage | null | undefined) {
+  let insertion = "";
+
+  if (currentValue === null) {
+    insertion = "";
+  } else if (typeof currentValue === "number") {
+    insertion = currentValue.toString();
+  } else if (typeof currentValue === "string") {
+    insertion = currentValue;
+  } else if (typeof currentValue === "boolean") {
+    insertion = currentValue.toString();
+  } else if (typeof currentValue === "object") {
+
+    if (currentValue.toString === {}.toString) {
+      throw new Error("Plain object passed to retort template");
+    }
+
+    insertion = currentValue.toString();
+
+    // TODO: Messages being inserted.
+    // TODO: Conversations being inserted.
+  } else if (currentValue === undefined) {
+    throw new Error("Undefined passed to retort template");
+  } else if (typeof currentValue === "function") {
+    let currentVal = currentValue as Function; // Workaround for a seeming bug in typescript;
+    
+    if (currentVal.toString === (() => { }).toString || currentVal.toString === function () { }.toString) {
+      throw new Error("Plain function passed to retort template");
+    }
+
+    insertion = currentVal.toString();
+  } else if (typeof currentValue === "symbol") {
+    throw new Error("Symbol passed to retort template");
+  } else if (typeof currentValue === "bigint") {
+    throw new Error("BigInt not yet supported");
+  } else {
+    throw new Error("Unsupported value inserted into template");
+  }
+  return insertion;
 }
 
 export function isTemplateStringsArray(
