@@ -11,7 +11,7 @@
     "build": "tsc",
     "start": "ts-node src/index.ts",
     "publish-to-npm": "npm run build && npm publish --access public",
-    "test": "vitest run",
+    "test": "tsc && vitest run",
     "test-watch": "vitest",
     "ci": "npm run build && npm run test"
   },
