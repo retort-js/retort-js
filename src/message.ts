@@ -26,7 +26,7 @@ export type RetortValue =
 
 type HasToStringKey<T> = "toString" extends keyof T ? T : never;
 
-type RetortValueArray<T> = { [K in keyof T]: RetortValue | HasToStringKey<T[K]> };
+export type RetortValueArray<T extends any[]> = { [K in keyof T]: RetortValue | HasToStringKey<T[K]> };
 
 export function templateContent<T extends any[]>(
   templateStrings: TemplateStringsArray,
