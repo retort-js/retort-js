@@ -150,6 +150,10 @@ describe("templateContent function", () => {
     expect($` ${"TEST1"} TEST2 ${"TEST3"} `).toBe("TEST1 TEST2 TEST3");
   });
 
+  it("Array insertions work.", () => {
+    expect($`${["TEST1", "TEST2"]}`).toBe("TEST1,TEST2");
+  });
+
   it("Object insertions throw", () => {
     expect(() => $`${new Object() as RetortValue}`).toThrow();
   });
