@@ -22,15 +22,15 @@ export type RetortValue =
   | boolean
   | undefined
   | null
-  | HasToString;
+  | RetortMessage
 
-interface HasToString {
-  toString(): string;
-}
+type HasToStringKey<T> = "toString" extends keyof T ? T : never;
 
-export function templateContent(
+type RetortValueArray<T> = { [K in keyof T]: RetortValue | HasToStringKey<T[K]> };
+
+export function templateContent<T extends any[]>(
   templateStrings: TemplateStringsArray,
-  ...values: RetortValue[]
+  ...values: RetortValueArray<T>
 ): string {
   // Get the strings in raw form.
   let strings = templateStrings.raw.map((x) => x);
@@ -171,3 +171,4 @@ export function unescapeSegment(str: string) {
     return str;
   }
 }
+
