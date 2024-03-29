@@ -20,13 +20,11 @@ export type RetortValue =
   | string
   | number
   | boolean
-  | undefined
   | null
-  | RetortMessage
 
-type HasToStringKey<T> = "toString" extends keyof T ? T : never;
+type ToStringable<T> = Exclude<("toString" extends keyof T ? (T["toString"] extends () => string ? T : never) : never), Symbol>;
 
-export type RetortValueArray<T extends any[]> = { [K in keyof T]: RetortValue | HasToStringKey<T[K]> };
+export type RetortValueArray<T extends any[]> = { [K in keyof T]: RetortValue | ToStringable<T[K]> };
 
 export function templateContent<T extends any[]>(
   templateStrings: TemplateStringsArray,
@@ -172,3 +170,42 @@ export function unescapeSegment(str: string) {
   }
 }
 
+
+function typeTests() {
+
+  templateContent`Hello, ${"world"}!`;
+  templateContent`Hello, ${42}!`;
+  templateContent`Hello, ${true}!`;
+  templateContent`Hello, ${null}!`;
+
+  templateContent`Hello, ${new RetortMessage({ role: "user", content: "world" })}!`;
+
+  templateContent`Hello, ${{ toString: () => "world" }}!`;
+
+  class ToStringTest {
+    toString() {
+      return "Hello";
+    }
+  }
+
+  templateContent`Hello, ${new ToStringTest()}`;
+
+  class ToStringInheritableTest extends ToStringTest {}
+
+  templateContent`Hello, ${new ToStringInheritableTest()}`;
+
+  // @ts-expect-error
+  templateContent`Hello, ${new (class { })()}`;
+
+  // @ts-expect-error
+  templateContent`Hello, ${() => { }}!`;
+
+  // @ts-expect-error
+  templateContent`Hello, ${undefined}!`;
+
+  // @ts-expect-error
+  templateContent`Hello, ${/./}!`;
+
+  // @ts-expect-error
+  templateContent`Hello, ${Symbol("world")}!`;
+}
