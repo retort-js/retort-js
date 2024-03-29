@@ -154,6 +154,10 @@ describe("templateContent function", () => {
     expect($`${["TEST1", "TEST2"]}`).toBe("TEST1,TEST2");
   });
 
+  it("toString insertions work.", () => {
+    expect($`${{toString: () => "TEST"}}`).toBe("TEST");
+  });
+
   it("Object insertions throw", () => {
     expect(() => $`${new Object() as RetortValue}`).toThrow();
   });
