@@ -159,7 +159,7 @@ describe("templateContent function", () => {
   });
 
   it("Undefined insertions throw", () => {
-    expect(() => $`${undefined}`).toThrow();
+    expect(() => $`${undefined as unknown as RetortValue}`).toThrow();
   });
 
   it("Function insertions throw", () => {
