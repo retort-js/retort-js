@@ -1,19 +1,40 @@
 import { RetortSettings, RetortRole } from "./agent";
 import { id } from "./id";
 
+export interface RetortMessageData {
+  content: string;
+}
+
 export class RetortMessage {
   readonly id: string;
-  role: RetortRole;
-  content = "";
+  readonly role: RetortRole;
+  private _data : null | {content: string} = null;
+
+  get content() {
+    if (this._data === null) {
+      throw new Error("Message not yet resolved; To fix this, you can await ");
+    }
+    return this._data.content;
+  }
 
   static createId() {
     return id("msg");
   }
 
-  constructor({ id, role, content }: { id?: string, role: RetortRole; content: string }) {
-    this.id = id || RetortMessage.createId();
-    this.role = role;
-    this.content = content;
+  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { promise: Promise<RetortMessageData> })) {
+    this.id = options.id || RetortMessage.createId();
+    this.role = options.role;
+    if ("content" in options) {
+      this._data = {content: options.content};
+    }
+    else if ("promise" in options) {
+      options.promise.then((data) => {
+        this._data = {content: data.content};
+      });
+    }
+    else {
+      throw new Error("Invalid options passed to RetortMessage constructor; must include either 'content' or 'promise'");
+    }
   }
 }
 
