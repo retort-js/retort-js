@@ -2,11 +2,16 @@ import { RetortSettings, RetortRole } from "./agent";
 import { id } from "./id";
 
 export class RetortMessage {
-  readonly id: string = id("msg");
+  readonly id: string;
   role: RetortRole;
   content = "";
 
-  constructor({ role, content }: { role: RetortRole; content: string }) {
+  static createId() {
+    return id("msg");
+  }
+
+  constructor({ id, role, content }: { id?: string, role: RetortRole; content: string }) {
+    this.id = id || RetortMessage.createId();
     this.role = role;
     this.content = content;
   }
