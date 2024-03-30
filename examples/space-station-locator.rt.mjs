@@ -7,7 +7,7 @@ const getCoordinates = async function () {
       'https://api.wheretheiss.at/v1/satellites/25544'
     );
     const data = await response.json();
-    return [data.longitude, data.latitude];
+    return [data["longitude"], data["latitude"]];
   } catch (err) {
     console.log("Couldn't fetch coordinates", err);
     throw err;
