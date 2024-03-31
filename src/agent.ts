@@ -41,7 +41,7 @@ export class RetortAgent extends RetortExtendableFunction {
     return defineGeneration(this.conversation, this.role, true);
   }
 
-  get prompt() {
+  private get prompt() {
     return definePrompt(this.conversation, this.role, true);
   }
 
