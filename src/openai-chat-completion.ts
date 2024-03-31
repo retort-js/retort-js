@@ -64,9 +64,8 @@ export async function* openAiChatCompletion(
   //     }
 
   //     return content
-
   for await (const chunk of chatCompletion) {
-    const content = chunk.choices[0]?.delta?.content || "";
-    yield content;
+    const contentDelta = chunk.choices[0]?.delta?.content || "";
+    yield {content, contentDelta};
   }
 }
