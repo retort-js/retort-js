@@ -5,7 +5,7 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/index";
 
 export async function* openAiChatCompletion(
   settings: RetortSettings,
-  messagePromises: (RetortMessage | Promise<RetortMessage>)[]
+  messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({
     apiKey: process.env["OPENAI_API_KEY"],

@@ -12,9 +12,9 @@ export function defineGeneration(
   push: boolean
 ) {
   return function generation(generationSettings?: Partial<RetortSettings>) {
-    let streams = conversation.messagePromises.slice(0);
+    let promises = conversation.messages.map((message) => message.promise);
 
-    let stream = openAiChatCompletion(conversation.settings, streams);
+    let stream = openAiChatCompletion(conversation.settings, promises);
     let retortMessage = new RetortMessage({ stream, role })
 
 
