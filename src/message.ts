@@ -37,7 +37,11 @@ export class RetortMessage {
     return id("msg");
   }
 
-  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ contentDelta: string }> })) {
+  private static async* createStreamFromPromise(promise: Promise<RetortMessage>) {
+    yield { content: (await promise).content, contentDelta: (await promise).content };
+  }
+
+  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ contentDelta: string }> } | { promise: Promise<string> })) {
     this.id = options.id || RetortMessage.createId();
     this.role = options.role;
     if ("content" in options) {
@@ -60,6 +64,18 @@ export class RetortMessage {
       this.promise.getStream = createStreamCloner(options.stream);
 
     }
+    else if ("promise" in options) {
+      this.promise = options.promise.then((content) => {
+        this._data = { content };
+        return this;
+      }) as any as RetortMessagePromise;
+      let promise = this.promise;
+      this.promise.getStream = async function* () {
+        yield { content: (await promise).content, contentDelta: (await promise).content };
+        return;
+      };
+
+    }
     else {
       throw new Error("Invalid options passed to RetortMessage constructor; must include either 'content' or 'stream'");
     }
@@ -70,7 +86,7 @@ export class RetortMessage {
     let stream = this.promise.getStream();
     this.promise.stream = (async function* () {
       for await (let chunk of stream) {
-
+        yield chunk.content;
       }
 
     })();
