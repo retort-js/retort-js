@@ -150,12 +150,20 @@ describe("templateContent function", () => {
     expect($` ${"TEST1"} TEST2 ${"TEST3"} `).toBe("TEST1 TEST2 TEST3");
   });
 
+  it("Array insertions work.", () => {
+    expect($`${["TEST1", "TEST2"]}`).toBe("TEST1,TEST2");
+  });
+
+  it("toString insertions work.", () => {
+    expect($`${{toString: () => "TEST"}}`).toBe("TEST");
+  });
+
   it("Object insertions throw", () => {
     expect(() => $`${new Object() as RetortValue}`).toThrow();
   });
 
   it("Undefined insertions throw", () => {
-    expect(() => $`${undefined}`).toThrow();
+    expect(() => $`${undefined as unknown as RetortValue}`).toThrow();
   });
 
   it("Function insertions throw", () => {

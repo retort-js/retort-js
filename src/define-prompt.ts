@@ -2,14 +2,14 @@ import { log } from "console";
 import { RetortSettings } from "./agent";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
-import { RetortMessage, RetortValue, isTemplateStringsArray, templateContent } from "./message";
+import { RetortMessage, RetortValue, RetortValueArray, isTemplateStringsArray, templateContent } from "./message";
 import readline from "readline";
 
 
 export function definePrompt(conversation: RetortConversation, role: "user" | "assistant" | "system", push: boolean) {
 
 
-  return function prompt(value0: string | TemplateStringsArray, ...values: RetortValue[]) {
+  return function prompt<T extends any[]>(value0: string | TemplateStringsArray, ...values: RetortValueArray<T>) {
 
     let message: RetortMessage;
 
