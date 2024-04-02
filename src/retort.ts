@@ -2,6 +2,9 @@ import { createHash } from "./logger";
 import { RetortConversation } from "./conversation";
 import { id } from "./id";
 import { run } from "./run";
+import url from "url";
+
+var runHasBeenTriggered = false;
 
 export interface Retort<T> {
   _run: (...values: any[]) => RetortInProgress<T>;
@@ -44,14 +47,40 @@ export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
     retortType: "retort",
   };
 
-  const silent = process.argv.includes("--silent");
+  if (!runHasBeenTriggered) {
+    // Make sure we only run the script once
+    runHasBeenTriggered = true;
 
-  // Only run the chat function if this module is the main module.
-  setTimeout(() => {
-    if (returnedModule.retortId === require.main?.exports?.retortId) {
-      run(returnedModule, null, { shouldSaveToLog: !silent });
-    }
-  }, 0);
+    setTimeout(async () => {
+      // Get the running script from argv
+      const mainModuleFilename = process.argv[1];
+
+      if (!mainModuleFilename) {
+        return;
+      }
+      else {
+
+        // Check the script to see if it ends in *.rt.js, *.rt.cjs, or *.rt.mjs
+        const isRetortScript = mainModuleFilename.match(/\.rt\.(js|cjs|mjs)\/*$/);
+
+        if (!isRetortScript) {
+          return;
+        }
+
+        // Convert the filename to a file url using url module
+        const mainModuleUrl = url.pathToFileURL(mainModuleFilename);
+
+        // Run the script
+        const retort = await import(mainModuleUrl.toString());
+
+        run(retort);
+
+      }
+
+    }, 0);
+
+  }
+
 
   return returnedModule;
 }

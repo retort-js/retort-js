@@ -14,10 +14,9 @@ const getCoordinates = async function () {
   }
 };
 
-const retorter = retort(async ($) => {
-
+export default retort(async ($) => {
   let coordinates = await getCoordinates();
-
+  
   $.system`
   You are an expert on the Open Notify Recipe API. Using the location of the ISS, please go into detail on where it is currently located.
   Here is the link to the documentation: https://wheretheiss.at/w/developer
@@ -30,5 +29,3 @@ const retorter = retort(async ($) => {
 
   await $.assistant.generation();
 });
-
-retorter._run(); // Run the conversation
