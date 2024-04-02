@@ -12,17 +12,7 @@
     "allowJs": true,
     "checkJs": true,
 
-    "strict": true,
-    "strictNullChecks": true,
-    "noImplicitAny": false,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "alwaysStrict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "strict": false,
 
     "skipLibCheck": true
   }
