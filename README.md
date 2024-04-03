@@ -196,23 +196,23 @@ retorter._run(); // run the conversation
 
 ## RetortConversation Properties
 
-| Property          | Description                                                                                                   |
-| ----------------- |---------------------------------------------------------------------------------------------------------------|
-| `id`              | A unique identifier for the conversation.                                                                     |
-| `chat`            | A reference to the conversation itself.                                                                       |
-| `messagePromises` | An array of messages or promises of messages in the conversation.                                             |
-| `settings`        | An object containing settings for the conversation, including the model used, temperature, and topP.          |
-| `model`           | A getter and setter for the model used in the conversation.                                                   |
-| `temperature`     | A getter and setter for the temperature setting of the conversation.                                          |
-| `topP`            | A getter and setter for the topP setting of the conversation.                                                 |
-| `messages`        | A getter for the messages in the conversation. Throws an error if any message promises have not yet resolved. |
-| `user`            | An agent representing the user in the conversation.                                                           |
-| `input`           | A getter for the user's input in the conversation. A getter for the user's input in the conversation. It takes an object ```{query: string} ```as an argument. This defines what input query the user will see in the console.                                                           |
-| `assistant`       | An agent representing the assistant in the conversation.                                                      |
-| `system`          | An agent representing the system in the conversation.                                                         |
-| `generation`      | A getter for the assistant's generation in the conversation.                                                  |
-| `prompt`          | A getter for the user's prompt in the conversation.                                                           |
-| `run`             | A function that runs a conversation. It takes a Retort object as an argument.                                 |
+| Property          | Description                                                                                                                                                                                                                    |
+| ----------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`              | A unique identifier for the conversation.                                                                                                                                                                                      |
+| `chat`            | A reference to the conversation itself.                                                                                                                                                                                        |
+| `messagePromises` | An array of messages or promises of messages in the conversation.                                                                                                                                                              |
+| `settings`        | An object containing settings for the conversation, including the model used, temperature, and topP.                                                                                                                           |
+| `model`           | A getter and setter for the model used in the conversation.                                                                                                                                                                    |
+| `temperature`     | A getter and setter for the temperature setting of the conversation.                                                                                                                                                           |
+| `topP`            | A getter and setter for the topP setting of the conversation.                                                                                                                                                                  |
+| `messages`        | A getter for the messages in the conversation. Throws an error if any message promises have not yet resolved.                                                                                                                  |
+| `user`            | An agent representing the user in the conversation.                                                                                                                                                                            |
+| `input`           | A getter for the user's input in the conversation. A getter for the user's input in the conversation. It takes an object ```{query: string}``` as an argument. This defines what input query the user will see in the console. |
+| `assistant`       | An agent representing the assistant in the conversation.                                                                                                                                                                       |
+| `system`          | An agent representing the system in the conversation.                                                                                                                                                                          |
+| `generation`      | A getter for the assistant's generation in the conversation.                                                                                                                                                                   |
+| `prompt`          | A getter for the user's prompt in the conversation.                                                                                                                                                                            |
+| `run`             | A function that runs a conversation. It takes a Retort object as an argument.                                                                                                                                                  |
 ---
 
 
