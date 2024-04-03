@@ -1,4 +1,4 @@
-module.exports = require('retort-js').retort(async ($) => {
+module.exports = require('../dist/index.js').retort(async ($) => {
   /*
     The magic line above defines and contains the Retort script.
     Edit the script, save it, and bookmark the URL to come back here.
@@ -20,10 +20,6 @@ module.exports = require('retort-js').retort(async ($) => {
   $.user`
     When will AI take over the world?
   `;
-
-  await $.assistant.generation();
-
-  await $.user.input();
 
   await $.assistant.generation();
 });
