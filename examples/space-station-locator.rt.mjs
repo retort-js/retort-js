@@ -7,27 +7,25 @@ const getCoordinates = async function () {
       'https://api.wheretheiss.at/v1/satellites/25544'
     );
     const data = await response.json();
-    return [data.longitude, data.latitude];
+    return [data["longitude"], data["latitude"]];
   } catch (err) {
     console.log("Couldn't fetch coordinates", err);
     throw err;
   }
 };
 
-const retorter = retort(async ($) => {
-  let coordinates = await getCoordinates()
-  const instructions = `
+export default retort(async ($) => {
+  let coordinates = await getCoordinates();
+  
+  $.system`
   You are an expert on the Open Notify Recipe API. Using the location of the ISS, please go into detail on where it is currently located.
   Here is the link to the documentation: https://wheretheiss.at/w/developer
   You should respond with the current location in the world based on these coordinates: ${coordinates}.
   Respond with the location of the coordinates as in Country, be exact.
-  Answer any question about the current location.`
-  
-  $.system(instructions);
+  Answer any question about the current location.
+  `;
 
-  $.user`Where is the ISS currently?`
+  $.user`Where is the ISS currently?`;
 
   await $.assistant.generation();
 });
-
-retorter._run(); // Run the conversation
