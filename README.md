@@ -218,4 +218,4 @@ retorter._run(); // run the conversation
 
 # Join our Community
 
-Join us in the [RetortJS](https://discord.gg/YdZBFfWpYz) Discord to share your experiences, ask questions and get help from the creators.
+Join us in the [RetortJS](https://discord.gg/YdZBFfWpYz) Discord to share your experiences, ask questions, contribute, and get help from the creators.
