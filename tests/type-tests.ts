@@ -1,13 +1,18 @@
-import { RetortMessage, templateContent } from "dist/message";
+import { RetortAgent } from "dist/agent";
+import { RetortConversation } from "dist/conversation";
+import { RetortMessage } from "dist/message";
 
-templateContent`Hello, ${"world"}!`;
-templateContent`Hello, ${42}!`;
-templateContent`Hello, ${true}!`;
-templateContent`Hello, ${null}!`;
+declare var template:RetortAgent;
 
-templateContent`Hello, ${new RetortMessage({ role: "user", content: "world" })}!`;
+template`Hello, ${"world"}!`;
+template`Hello, ${42}!`;
+template`Hello, ${true}!`;
+template`Hello, ${null}!`;
+template`Hello, ${[]}!`;
 
-templateContent`Hello, ${{ toString: () => "world" }}!`;
+template`Hello, ${new RetortMessage({ role: "user", content: "world" })}!`;
+
+template`Hello, ${{ toString: () => "world" }}!`;
 
 class ToStringTest {
   toString() {
@@ -15,23 +20,23 @@ class ToStringTest {
   }
 }
 
-templateContent`Hello, ${new ToStringTest()}`;
+template`Hello, ${new ToStringTest()}`;
 
 class ToStringInheritableTest extends ToStringTest { }
 
-templateContent`Hello, ${new ToStringInheritableTest()}`;
+template`Hello, ${new ToStringInheritableTest()}`;
 
 // @ts-expect-error
-templateContent`Hello, ${new (class { })()}`;
+template`Hello, ${new (class { })()}`;
 
 // @ts-expect-error
-templateContent`Hello, ${() => { }}!`;
+template`Hello, ${() => { }}!`;
 
 // @ts-expect-error
-templateContent`Hello, ${undefined}!`;
+template`Hello, ${undefined}!`;
 
 // @ts-expect-error
-templateContent`Hello, ${/./}!`;
+template`Hello, ${/./}!`;
 
 // @ts-expect-error
-templateContent`Hello, ${Symbol("world")}!`;
+template`Hello, ${Symbol("world")}!`;
