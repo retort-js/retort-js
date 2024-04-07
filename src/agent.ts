@@ -3,7 +3,7 @@ import { defineGeneration } from "./define-generation";
 import { defineInput } from "./define-input";
 import { definePrompt } from "./define-prompt";
 import { RetortExtendableFunction } from "./extendable-function";
-import { RetortMessage, RetortValue, isTemplateStringsArray } from "./message";
+import { RetortMessage, RetortValue, RetortValueArray, isTemplateStringsArray } from "./message";
 
 // TODO - tell typescript that call, bind apply, etc are not important,
 // and should be ignored in intellisense.
@@ -14,7 +14,7 @@ export interface RetortAgent {
   (content: string): RetortMessage;
 
   // assistant `Hello`
-  (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage;
+  <T extends any[]>(templateStrings: TemplateStringsArray, ...values: RetortValueArray<T>): RetortMessage;
 }
 
 export class RetortAgent extends RetortExtendableFunction {
