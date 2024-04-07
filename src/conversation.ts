@@ -31,51 +31,26 @@ export class RetortConversation extends RetortExtendableFunction {
 
     run = run;
 
-    /**
-     * @deprecated
-     * @see settings.model
-     */
     get model() {
         return this.settings.model;
     }
 
-    /**
-     * @deprecated
-     * @see settings.model
-     */
     set model(value: string) {
         this.settings.model = value;
     }
 
-    /**
-     * @deprecated
-     * @see settings.temperature
-     */
     get temperature() {
         return this.settings.temperature;
     }
 
-
-    /**
-     * @deprecated
-     * @see settings.temperature
-     */
     set temperature(value: number) {
         this.settings.temperature = value;
     }
 
-    /**
-     * @deprecated
-     * @see settings.topP
-     */
     get topP() {
         return this.settings.topP;
     }
 
-    /**
-     * @deprecated
-     * @see settings.topP
-     */
     set topP(value: number) {
         this.settings.topP = value;
     }
