@@ -31,6 +31,12 @@ export async function run<T>(
 
   options = { ...defaultRunOptions, ...options };
 
+  if (!retort._run) {
+    throw new Error(
+      "Tried to run something that is not a retort."
+    );
+  }
+
   const retortInProgress = retort._run();
 
   const awaitedCompletionPromise = await retortInProgress.completionPromise;

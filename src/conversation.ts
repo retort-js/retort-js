@@ -1,5 +1,5 @@
 import { RetortSettings, agent } from "./agent";
-import { RetortMessage, RetortValue } from "./message";
+import { RetortMessage, RetortValue, RetortValueArray } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
 import { defineInput } from "./define-input";
@@ -126,7 +126,7 @@ export class RetortConversation extends RetortExtendableFunction {
 
 export interface RetortConversation {
     (input: string): RetortMessage,
-    (templateStrings: TemplateStringsArray, ...values: RetortValue[]): RetortMessage
+    <T extends any[]>(templateStrings: TemplateStringsArray, ...values: RetortValueArray<T>): RetortMessage
 
 }
 
