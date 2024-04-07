@@ -83,7 +83,15 @@ function retortValueToString(currentValue: RetortValue | any) {
   } else if (typeof currentValue === "object") {
 
     if (currentValue.toString === {}.toString) {
-      throw new Error("Plain object passed to retort template");
+      // Check if the object is thenable
+      if (currentValue.then && typeof currentValue.then === "function") {
+        throw new Error("Promise passed to retort template. Use 'await' on the promise.");
+      }
+      else
+      {
+        throw new Error("Plain object passed to retort template. If you want to see the object, you should use JSON.stringify.");
+      }
+      
     }
 
     insertion = currentValue.toString();
