@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { RetortSettings } from "./agent";
 import { RetortMessage as RetortMessage } from "./message";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index";
+import RetortTool from "./tool";
 
 export async function* openAiChatCompletion(
   settings: RetortSettings,
@@ -18,6 +19,14 @@ export async function* openAiChatCompletion(
       content: m.content,
       role: m.role,
     });
+  }
+
+  let tool = new RetortTool({ name: "openai-chat-completion", description: "OpenAI Chat Completion", parameters: { model: "string", temperature: "number", topP: "number" } });
+  let toolDef = {
+    name: tool.name,
+    description: tool.description,
+    parameters: Object.keys(tool.parameters).length ? retortParamsToJsonSchema(tool.parameters)
+      : undefined
   }
 
   const chatCompletion = await openai.chat.completions.create({
@@ -45,7 +54,7 @@ export async function* openAiChatCompletion(
     temperature: settings.temperature,
 
     tool_choice: undefined,
-    tools: undefined,
+    tools: [],
     top_logprobs: undefined,
     top_p: settings.topP,
     user: undefined,
