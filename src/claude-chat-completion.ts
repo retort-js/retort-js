@@ -35,7 +35,7 @@ export async function* claudeChatCompletion(
     max_tokens: settings.maxTokens ?? 4096,
     temperature: settings.temperature,
     top_p: settings.topP,
-    model: settings.model,
+    model: settings.model.toString(),
     system,
 
     

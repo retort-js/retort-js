@@ -36,7 +36,7 @@ export class RetortConversation extends RetortExtendableFunction {
     }
 
     set model(value: RetortModel) {
-        this.settings.model = value;
+        this.settings.model = value.toString();
     }
 
     get temperature() {
