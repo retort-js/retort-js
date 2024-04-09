@@ -1,4 +1,5 @@
 import { RetortSettings, RetortRole } from "./agent";
+import { claudeChatCompletion } from "./claude-chat-completion";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
@@ -14,7 +15,18 @@ export function defineGeneration(
   return function generation(generationSettings?: Partial<RetortSettings>) {
     let promises = conversation.messages.map((message) => message.promise);
 
-    let stream = openAiChatCompletion(conversation.settings, promises);
+    if (generationSettings?.model?.startsWith("gpt-")) {
+      var stream = openAiChatCompletion(conversation.settings, promises);
+    }
+    else if (generationSettings?.model?.startsWith("claude-")) {
+      stream = claudeChatCompletion(conversation.settings, promises);
+    }
+    else {
+      throw new Error("Unsupported model: " + generationSettings?.model);
+    }
+
+
+
     let retortMessage = new RetortMessage({ stream, role })
 
 

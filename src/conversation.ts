@@ -1,4 +1,4 @@
-import { RetortSettings, agent } from "./agent";
+import { RetortModel, RetortSettings, agent } from "./agent";
 import { RetortMessage, RetortValue, RetortValueArray } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
@@ -35,7 +35,7 @@ export class RetortConversation extends RetortExtendableFunction {
         return this.settings.model;
     }
 
-    set model(value: string) {
+    set model(value: RetortModel) {
         this.settings.model = value;
     }
 

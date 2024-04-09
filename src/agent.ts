@@ -60,13 +60,44 @@ export type RetortRole = "user" | "assistant" | "system";
 // export type RetortProvider = "openai";
 
 export interface RetortSettings {
-  model: string;
+  model: RetortModel;
   temperature: number;
   topP: number;
+  maxTokens?: number;
 }
 
 export interface RetortInputSettings extends RetortSettings {
   query?: string;
 }
+
+const modelNameBrand = Symbol();
+
+
+type ClaudeModel =
+| 'claude-3-opus-20240229'
+| 'claude-3-sonnet-20240229'
+| 'claude-3-haiku-20240307'
+| 'claude-2.1'
+| 'claude-2.0'
+| 'claude-instant-1.2';
+
+type OpenAIModel = 
+| 'gpt-4-0125-preview'
+| 'gpt-4-turbo-preview'
+| 'gpt-4-1106-preview'
+| 'gpt-4-vision-preview'
+| 'gpt-4-1106-vision-preview'
+| 'gpt-4'
+| 'gpt-4-0613'
+| 'gpt-4-32k'
+| 'gpt-4-32k-0613'
+| 'gpt-3.5-turbo-0125'
+| 'gpt-3.5-turbo'
+| 'gpt-3.5-turbo-1106'
+| 'gpt-3.5-turbo-16k'
+| 'gpt-3.5-turbo-0613'
+| 'gpt-3.5-turbo-16k-0613';
+
+export type RetortModel = ClaudeModel | OpenAIModel | String;
 
 
