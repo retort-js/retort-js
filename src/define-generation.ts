@@ -15,10 +15,11 @@ export function defineGeneration(
   push: boolean
 ) {
   return function generation(generationSettings?: Partial<RetortSettings>) {
+    let settings = { ...conversation.settings, ...generationSettings };
     let streams = conversation.messagePromises.slice(0);
 
     let streamGenerator = teeAsync(
-      openAiChatCompletion(conversation.settings, streams)
+      openAiChatCompletion(settings, streams)
     );
 
     let internalStream = streamGenerator[0];
