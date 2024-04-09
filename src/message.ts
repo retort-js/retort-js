@@ -95,6 +95,14 @@ export class RetortMessage {
   toString() {
     return this.content;
   }
+  
+  toJSON() {
+    return {
+      id: this.id,
+      role: this.role,
+      content: this.content,
+    };
+  }
 
 }
 
