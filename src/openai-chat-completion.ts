@@ -23,7 +23,7 @@ export async function* openAiChatCompletion(
   const chatCompletion = await openai.chat.completions.create({
     messages: messages,
 
-    model: settings.model,
+    model: settings.model.toString(),
     frequency_penalty: undefined,
     function_call: undefined,
     functions: undefined,
