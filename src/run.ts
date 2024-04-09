@@ -3,24 +3,27 @@ import { Retort, retort } from "./retort";
 import { logScript } from "./logger";
 import { ChatFunction } from "./retort";
 
-type RunOptions = {
+export type RetortRunOptions = {
   shouldSaveToLog?: boolean;
   shouldUseCache?: boolean; // or something that provides the cache
 };
 
-const defaultRunOptions: RunOptions = {
+const defaultRunOptions: RetortRunOptions = {
   shouldSaveToLog: true,
   shouldUseCache: false,
 };
+export type RetortRunnable<T> = Promise<RetortScriptImport<T>> | Retort<T> | RetortScriptImport<T> | ChatFunction<T>;
+
 export async function run<T>(
-  promiseOrRetortOrChatFunction:
-    | Promise<RetortScriptImport<T>>
-    | Retort<T>
-    | RetortScriptImport<T>
-    | ChatFunction<T>,
+  promiseOrRetortOrChatFunction: | RetortRunnable<T>,
   params: any = null,
-  options: RunOptions = defaultRunOptions
+  options: RetortRunOptions = defaultRunOptions
 ) {
+  
+  if (options === undefined) {
+    options = defaultRunOptions;
+  }
+
   let ret = await promiseOrRetortOrChatFunction;
 
 
