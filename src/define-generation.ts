@@ -13,16 +13,17 @@ export function defineGeneration(
   push: boolean
 ) {
   return function generation(generationSettings?: Partial<RetortSettings>) {
+    let settings = { ...conversation.settings, ...generationSettings}
     let promises = conversation.messages.map((message) => message.promise);
 
-    if (generationSettings?.model?.startsWith("gpt-")) {
+    if (settings?.model?.startsWith("gpt-")) {
       var stream = openAiChatCompletion(conversation.settings, promises);
     }
-    else if (generationSettings?.model?.startsWith("claude-")) {
+    else if (settings?.model?.startsWith("claude-")) {
       stream = claudeChatCompletion(conversation.settings, promises);
     }
     else {
-      throw new Error("Unsupported model: " + generationSettings?.model);
+      throw new Error("Unsupported model: " + settings?.model);
     }
 
 
