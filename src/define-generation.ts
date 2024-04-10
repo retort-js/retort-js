@@ -17,6 +17,7 @@ export function defineGeneration(
     let promises = conversation.messages.map((message) => message.promise);
 
 
+    
     if (settings?.model?.startsWith("claude-")) {
       var stream = claudeChatCompletion(conversation.settings, promises);
     }
