@@ -8,7 +8,7 @@ import readline from "readline";
 
 export const inputStore = new Map<string, (value: string) => void>();
 
-class RetortInputMessage extends RetortMessage {
+export class RetortInputMessage extends RetortMessage {
   inputId: string;
   retortType: "inputMessage";
   inputQuery?: string;
