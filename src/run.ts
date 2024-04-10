@@ -1,43 +1,50 @@
 import { RetortConversation, RetortScriptImport } from "./conversation";
-import { Retort } from "./retort";
+import { Retort, retort } from "./retort";
 import { logScript } from "./logger";
+import { ChatFunction } from "./retort";
 
-type RunOptions = {
+export type RetortRunOptions = {
   shouldSaveToLog?: boolean;
   shouldUseCache?: boolean; // or something that provides the cache
 };
 
-const defaultRunOptions: RunOptions = {
+const defaultRunOptions: RetortRunOptions = {
   shouldSaveToLog: true,
   shouldUseCache: false,
 };
-export async function run<T>(
-  promiseOrRetort:
-    | Promise<RetortScriptImport<T>>
-    | Retort<T>
-    | RetortScriptImport<T>,
-  params: any = null,
-  options: RunOptions = defaultRunOptions
-) {
-  let retort: Retort<T>;
+export type RetortRunnable<T> = Promise<RetortScriptImport<T>> | Retort<T> | RetortScriptImport<T> | ChatFunction<T>;
 
-  if (promiseOrRetort instanceof Promise) {
-    const script = await promiseOrRetort;
-    retort = script.default;
-  } else {
-    retort =
-      (promiseOrRetort as RetortScriptImport<any>)?.default ?? promiseOrRetort;
+export async function run<T>(
+  promiseOrRetortOrChatFunction: | RetortRunnable<T>,
+  params: any = null,
+  options: RetortRunOptions = defaultRunOptions
+) {
+  
+  if (options === undefined) {
+    options = defaultRunOptions;
   }
+
+  let ret = await promiseOrRetortOrChatFunction;
+
+
+  if ("default" in ret)  {
+    ret = ret.default;
+  }
+
+  if (typeof ret === "function") {
+    ret = retort(ret);
+  }
+
 
   options = { ...defaultRunOptions, ...options };
 
-  if (!retort._run) {
+  if (!ret._run) {
     throw new Error(
       "Tried to run something that is not a retort."
     );
   }
 
-  const retortInProgress = retort._run();
+  const retortInProgress = ret._run();
 
   const awaitedCompletionPromise = await retortInProgress.completionPromise;
 
@@ -59,7 +66,7 @@ export async function run<T>(
     const resolvedRetort = await retortInProgress;
     const messages = await Promise.all(resolvedRetort.$.messagePromises);
     const { id, settings } = resolvedRetort.$;
-    logScript(retort.retortHash, { id, settings, messages });
+    logScript(ret.retortHash, { id, settings, messages });
     return awaitedCompletionPromise;
   }
 
@@ -67,6 +74,6 @@ export async function run<T>(
     await Promise.all(awaitedCompletionPromise.messagePromises);
   }
 
-  logScript(retort.retortHash, awaitedCompletionPromise);
+  logScript(ret.retortHash, awaitedCompletionPromise);
   return awaitedCompletionPromise;
 }

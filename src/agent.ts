@@ -4,6 +4,7 @@ import { defineInput } from "./define-input";
 import { definePrompt } from "./define-prompt";
 import { RetortExtendableFunction } from "./extendable-function";
 import { RetortMessage, RetortValue, RetortValueArray, isTemplateStringsArray } from "./message";
+import { RetortRunOptions, RetortRunnable } from "./run";
 
 // TODO - tell typescript that call, bind apply, etc are not important,
 // and should be ignored in intellisense.
@@ -30,6 +31,22 @@ export class RetortAgent extends RetortExtendableFunction {
     super();
     this.conversation = conversation;
     this.role = role;
+  }
+
+  get run() {
+    let r = async <T>(runnable: RetortRunnable<T>, params?: any, options?: RetortRunOptions) => {
+      let result = await this.conversation.run(runnable, params, options);
+      if (result === null) {
+        return null;
+      }
+      else if (result === undefined) {
+        return undefined;
+      }
+      else {
+        return (this as RetortAgent)`${result}`
+      }
+
+    }
   }
 
 
