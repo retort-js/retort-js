@@ -33,23 +33,6 @@ export class RetortAgent extends RetortExtendableFunction {
     this.role = role;
   }
 
-  get run() {
-    let r = async <T>(runnable: RetortRunnable<T>, params?: any, options?: RetortRunOptions) => {
-      let result = await this.conversation.run(runnable, params, options);
-      if (result === null) {
-        return null;
-      }
-      else if (result === undefined) {
-        return undefined;
-      }
-      else {
-        return (this as RetortAgent)`${result}`
-      }
-
-    }
-  }
-
-
   get input() {
     return defineInput(this.conversation, this.role, true)
   };
