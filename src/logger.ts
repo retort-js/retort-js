@@ -5,6 +5,7 @@ import {
   RetortConversation,
   type SerializableRetortConversation,
 } from "./conversation";
+import { RetortMessage } from "./message";
 
 const isSerializableRetortConversation = (
   obj: any
@@ -71,7 +72,7 @@ const tryGetFromLog = (hash: string) => {
   return undefined;
 };
 
-const logScript = (hash: string, obj: any) => {
+const logScript = async (hash: string, obj: any) => {
   const retortDataDir = getFilePathToLog();
 
   if (!fs.existsSync(retortDataDir)) {
@@ -83,21 +84,18 @@ const logScript = (hash: string, obj: any) => {
   let serializedMessages = "";
 
   if (obj instanceof RetortConversation) {
-    serializedMessages = JSON.stringify(obj.toObject(), null, 2);
-  } else {
-    try {
-      serializedMessages = JSON.stringify(obj, null, 2);
-    } catch (e) {
-      console.error("Error serializing script", e);
-      throw new Error("Error serializing script");
-    }
+    await Promise.all(obj.messages.map((m) => m.promise));
+  } else if (obj instanceof RetortMessage) {
+    await obj.promise;
   }
+
+  serializedMessages = JSON.stringify(obj, null, 2);
 
   fs.writeFile(filePath, serializedMessages, (err) => {
     if (err) {
       throw new Error(err.message);
     }
-    console.log("The file has been saved!");
+    console.log("Successfully saved to the log!");
   });
 
   return serializedMessages;

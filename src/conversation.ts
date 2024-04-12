@@ -81,6 +81,10 @@ export class RetortConversation extends RetortExtendableFunction {
         return definePrompt(this, "user", false);
     }
 
+    /**
+     * Use the toJSON method
+     * @deprecated
+     */
     toObject(messages: RetortMessage[] = this.messages): SerializableRetortConversation {
         return {
             id: this.id,
@@ -89,7 +93,18 @@ export class RetortConversation extends RetortExtendableFunction {
         }
     }
 
-    // TODO: not sure this is right as we're losing the original id
+    toJSON(): SerializableRetortConversation {
+        return {
+            id: this.id,
+            settings: this.settings,
+            messages: this.messages,
+        }
+    }
+
+    /**
+     * If you need this create a fromJSON method
+     * @deprecated
+     */
     static fromObject(obj: SerializableRetortConversation) {
         const conversation = new RetortConversation();
         conversation.settings = obj.settings;
