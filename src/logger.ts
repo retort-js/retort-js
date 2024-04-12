@@ -81,7 +81,6 @@ const logScript = async (hash: string, obj: any) => {
 
   const filePath = path.join(retortDataDir, hash);
 
-  let serializedMessages = "";
 
   if (obj instanceof RetortConversation) {
     await Promise.all(obj.messages.map((m) => m.promise));
@@ -89,7 +88,13 @@ const logScript = async (hash: string, obj: any) => {
     await obj.promise;
   }
 
-  serializedMessages = JSON.stringify(obj, null, 2);
+  try {
+    var serializedMessages = JSON.stringify(obj, null, 2);
+  }
+  catch (err) {
+    serializedMessages = JSON.stringify({ $error: "Retort Serialization Error: " + ((err as any)?.message ?? err) }, null, 2);
+  }
+  
 
   fs.writeFile(filePath, serializedMessages, (err) => {
     if (err) {
