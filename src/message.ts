@@ -28,7 +28,7 @@ export class RetortMessage {
 
   get content() {
     if (this._data === null) {
-      throw new Error("Message not yet resolved; To fix this, you can await ");
+      throw new Error("Message not yet resolved; To fix this, you can await message.promise");
     }
     return this._data.content;
   }
