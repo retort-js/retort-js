@@ -41,7 +41,7 @@ export class RetortMessage {
     yield { content: (await promise).content, contentDelta: (await promise).content };
   }
 
-  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content:string, contentDelta: string }> } | { promise: Promise<string> })) {
+  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content: string, contentDelta: string }> } | { promise: Promise<string> })) {
     this.id = options.id || RetortMessage.createId();
     this.role = options.role;
     if ("content" in options) {

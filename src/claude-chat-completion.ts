@@ -44,9 +44,11 @@ export async function* claudeChatCompletion(
   let content = "";
   for await (const chunk of stream) {
     if (chunk.type === "content_block_delta") {
+      
       const contentDelta = chunk.delta.text || "";
-      yield { content, contentDelta };
       content += contentDelta;
+      yield { content, contentDelta };
+
     }
   }
 }
