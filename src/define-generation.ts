@@ -2,7 +2,7 @@ import { RetortSettings, RetortRole } from "./agent";
 import { claudeChatCompletion } from "./claude-chat-completion";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
-import { RetortMessage } from "./message";
+import { RetortMessage, RetortMessagePromise } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 
 
@@ -11,7 +11,7 @@ export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-) {
+): (generationSettings?: Partial<RetortSettings>) => RetortMessagePromise {
   return function generation(generationSettings?: Partial<RetortSettings>) {
     let settings = { ...conversation.settings, ...generationSettings}
     let promises = conversation.messages.map((message) => message.promise);
@@ -42,6 +42,6 @@ export function defineGeneration(
       logMessage(message);
     });
 
-    return retortMessage;
+    return retortMessage.promise;
   };
 }
