@@ -41,7 +41,7 @@ export class RetortMessage {
     yield { content: (await promise).content, contentDelta: (await promise).content };
   }
 
-  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ contentDelta: string }> } | { promise: Promise<string> })) {
+  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content:string, contentDelta: string }> } | { promise: Promise<string> })) {
     this.id = options.id || RetortMessage.createId();
     this.role = options.role;
     if ("content" in options) {
@@ -54,14 +54,18 @@ export class RetortMessage {
     }
     else if ("stream" in options) {
       let content = "";
+
+      let getStream = createStreamCloner(options.stream);
+
       this.promise = (async () => {
-        for await (const chunk of options.stream) {
+        for await (const chunk of getStream()) {
           content += chunk.contentDelta;
         }
         this._data = { content };
         return this;
       })() as any as RetortMessagePromise;
-      this.promise.getStream = createStreamCloner(options.stream);
+
+      this.promise.getStream = getStream;
 
     }
     else if ("promise" in options) {

@@ -1,5 +1,5 @@
 let Done = Symbol("retort-stream-done");
-export default function createStreamCloner<T>(generator: AsyncGenerator<T>) {
+export default function createStreamCloner<T>(generator: AsyncGenerator<T>): () => AsyncGenerator<Awaited<T>> {
 
   let buffer: (Promise<T | typeof Done>)[] = [];
   async function iterate() {
@@ -8,9 +8,13 @@ export default function createStreamCloner<T>(generator: AsyncGenerator<T>) {
     buffer.push(promise);
     for await (const chunk of generator) {
       resolve!(chunk)
+      promise = new Promise<T | typeof Done>((r) => resolve = r);
+      buffer.push(promise);
     }
     resolve!(Done);
   }
+
+  iterate();
 
   return async function* getStream<T>() {
     for (let i = 0; i < buffer.length; i++) {
