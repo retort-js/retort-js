@@ -27,5 +27,5 @@ export default retort(async ($) => {
 
   $.user`Where is the ISS currently?`;
 
-  await $.assistant.generation();
+  await $.assistant();
 });

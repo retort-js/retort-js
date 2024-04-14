@@ -18,7 +18,7 @@ const retorter = retort(async ($) => {
 
   $.user`Use all the information you have about my business to generate 5 unique keywords.`;
 
-  await $.assistant.generation();
+  await $.assistant();
 });
 
 retorter._run(); // Run the conversation

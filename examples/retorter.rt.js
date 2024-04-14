@@ -8,6 +8,6 @@ module.exports = require("../dist/index.js").retort(async $ => {
 
   while (!reply?.content.includes("DONE")) {
     await $.user.input();
-    reply = await $.assistant.generation();
+    reply = await $.assistant();
   }
 });

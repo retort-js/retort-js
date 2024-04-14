@@ -21,5 +21,5 @@ module.exports = require("../dist/index.js").retort(async ($) => {
     When will AI take over the world?
   `;
 
-  return await $.assistant.generation();
+  return await $.assistant();
 });

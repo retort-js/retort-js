@@ -13,7 +13,7 @@ let reply;
 do {
   await user.input();
 
-  reply = await assistant.generation();
+  reply = await assistant();
 } while (!reply.content.includes("DONE"));
 
 process.exit(0);
