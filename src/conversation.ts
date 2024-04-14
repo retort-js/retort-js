@@ -1,4 +1,4 @@
-import { RetortModel, RetortSettings, agent, assistant, system, user } from "./agent";
+import { RetortModel, RetortSettings, assistant, system, user } from "./agent";
 import { RetortMessage, RetortValue, RetortValueArray } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
