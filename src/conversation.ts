@@ -1,4 +1,4 @@
-import { RetortModel, RetortSettings, agent } from "./agent";
+import { RetortModel, RetortSettings, agent, assistant, system, user } from "./agent";
 import { RetortMessage, RetortValue, RetortValueArray } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
@@ -65,9 +65,9 @@ export class RetortConversation extends RetortExtendableFunction {
         return this.messages.map((m) => m.promise);
     }
 
-    user = agent(this, "user");
-    assistant = agent(this, "assistant");
-    system = agent(this, "system");
+    user = user(this);
+    assistant = assistant(this);
+    system = system(this);
 
     get input() {
         return defineInput(this, "user", false)
