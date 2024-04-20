@@ -1,6 +1,5 @@
 import { Test } from 'vitest';
 import type { ConvertToJsonSchema } from '../src/tool-definition';
-import { a } from 'vitest/dist/suite-UrZdHRff.js';
 
 type AssertEqual<T, Expected> = T extends Expected ? (Expected extends T ? true : never) : never;
 
