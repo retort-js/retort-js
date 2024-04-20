@@ -29,13 +29,15 @@ export type ConvertToJsonSchema<T> = {
     additionalProperties: false;
 };
 
-// Example of usage
-type ExampleSchema = {
-  foo: typeof String; // Required
-  bar: [typeof Number, undefined]; // Optional, not required
-  baz: [typeof Boolean, null]; // Nullable, not required
-  qux: typeof Boolean; // Required
-};
 
-type ConvertedSchema = ConvertToJsonSchema<ExampleSchema>;
-type ConvertedSchemaResult = FromSchema<ConvertedSchema>;
+type ContainsNull<T extends any[]> = T extends [infer First, ...infer Rest]
+  ? (First extends null ? true : ContainsNull<Rest>)
+  : false;
+
+  // Example of usage:
+type Tuple1 = [string, number, null];
+type Tuple2 = [string, number, boolean];
+
+// These will evaluate the condition based on the presence of null
+type Test1 = ContainsNull<Tuple1>; // This will be true
+type Test2 = ContainsNull<Tuple2>; // This will be false
