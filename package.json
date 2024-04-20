@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.1",
+    "json-schema-to-ts": "^3.0.1",
     "openai": "^4.24.7"
   }
 }
