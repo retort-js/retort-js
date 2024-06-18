@@ -66,7 +66,7 @@ export async function* openAiChatCompletion(
       }
 
     } as OpenAI.Chat.Completions.ChatCompletionTool;
-
+    
     body.tools = [tool];
     body.tool_choice = { type: "function", function: { name: tool.function.name } };
   }
@@ -87,7 +87,10 @@ export async function* openAiChatCompletion(
 
   //     return content
   for await (const chunk of chatCompletion) {
-    const contentDelta = chunk.choices[0]?.delta?.content || "";
+    const contentDelta = chunk.choices[0]?.delta?.content
+      ??
+      ((chunk.choices[0]?.delta?.tool_calls ?? [])[0]?.function?.arguments)
+      ?? "";
     content += contentDelta
     yield { content, contentDelta };
   }

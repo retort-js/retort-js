@@ -29,11 +29,11 @@ export function defineGeneration(
 
 
     if (settings?.model?.startsWith("claude-")) {
-      var stream = claudeChatCompletion(conversation.settings, promises);
+      var stream = claudeChatCompletion(settings, promises);
     }
     else {
       // Default to OpenAI.
-      stream = openAiChatCompletion(conversation.settings, promises);
+      stream = openAiChatCompletion(settings, promises);
     }
 
 
