@@ -4,27 +4,30 @@ import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage, RetortMessagePromise } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
-import { RetortObjectSchema } from "./tooling";
+import { RetortObjectSchema, RetortSchemaToType } from "./tooling";
 
 
 
-export interface RetortGenerationOptions {
+export interface RetortGenerationOptions<T extends RetortObjectSchema | undefined> {
   name?: string;
   description?: string;
-  parameters?: RetortObjectSchema;
+  parameters?: T;
 }
+
+// If the user specifies parameters, we return a RetortJsonMessage. Otherwise, we return a RetortMessage.
+type MapToSchemaType<T extends RetortObjectSchema | undefined> = T extends RetortObjectSchema ? RetortMessage<RetortSchemaToType<T>> : RetortMessage;
 
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-): (generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions>) => RetortMessagePromise {
+): <T extends RetortObjectSchema | undefined>(generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions<T>>) => RetortMessagePromise<T> {
   return function generation(generationSettings?: Partial<RetortSettings>) {
-    let settings = { ...conversation.settings, ...generationSettings}
+    let settings = { ...conversation.settings, ...generationSettings }
     let promises = conversation.messages.map((message) => message.promise);
 
 
-    
+
     if (settings?.model?.startsWith("claude-")) {
       var stream = claudeChatCompletion(conversation.settings, promises);
     }
@@ -35,7 +38,7 @@ export function defineGeneration(
 
 
 
-    let retortMessage = new RetortMessage({ stream, role })
+    let retortMessage = new RetortMessage({ stream, role, json: !!("parameters" in settings && settings.parameters) })
 
 
     if (push) {

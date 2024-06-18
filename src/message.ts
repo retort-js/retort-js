@@ -6,10 +6,10 @@ export interface RetortMessageData {
   content: string;
 }
 
-export interface RetortMessagePromise extends Promise<RetortMessage> {
+export interface RetortMessagePromise<T = string> extends Promise<RetortMessage> {
   id: string;
   role: RetortRole;
-  message: RetortMessage;
+  message: RetortMessage<T>;
   getStream(): AsyncGenerator<{ contentDelta: string, content: string }>;
 
   /*
@@ -19,11 +19,11 @@ export interface RetortMessagePromise extends Promise<RetortMessage> {
   stream: AsyncGenerator<string>;
 }
 
-
-export class RetortMessage {
-  readonly id: string;
-  readonly role: RetortRole;
-  readonly promise: RetortMessagePromise;
+export class RetortMessage<T = string> {
+  id: string;
+  role: RetortRole;
+  promise: RetortMessagePromise;
+  json: boolean;
   private _data: null | { content: string } = null;
 
   get content() {
@@ -31,6 +31,16 @@ export class RetortMessage {
       throw new Error("Message not yet resolved; To fix this, you can await message.promise");
     }
     return this._data.content;
+  }
+
+  get result() {
+    if (this.json) {
+      return JSON.parse(this.content);
+    }
+    else {
+      return this.content;
+    }
+
   }
 
   static createId() {
@@ -41,7 +51,8 @@ export class RetortMessage {
     yield { content: (await promise).content, contentDelta: (await promise).content };
   }
 
-  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content: string, contentDelta: string }> } | { promise: Promise<string> })) {
+  constructor(options: { json?: boolean } & { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content: string, contentDelta: string }> } | { promise: Promise<string> })) {
+    this.json = options.json ?? false;
     this.id = options.id || RetortMessage.createId();
     this.role = options.role;
     if ("content" in options) {
@@ -99,7 +110,7 @@ export class RetortMessage {
   toString() {
     return this.content;
   }
-  
+
   toJSON() {
     return {
       id: this.id,
@@ -181,11 +192,10 @@ function retortValueToString(currentValue: RetortValue | any) {
       if (currentValue.then && typeof currentValue.then === "function") {
         throw new Error("Promise passed to retort template. Use 'await' on the promise.");
       }
-      else
-      {
+      else {
         throw new Error("Plain object passed to retort template. If you want to see the object, you should use JSON.stringify.");
       }
-      
+
     }
 
     insertion = currentValue.toString();
