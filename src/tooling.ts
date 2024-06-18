@@ -22,8 +22,6 @@ export type MongooseSchemaPrimitiveType =
   | StringConstructor
   | NumberConstructor
   | BooleanConstructor
-  | DateConstructor
-  | BufferConstructor
   | ObjectConstructor
   | ArrayConstructor;
 
@@ -58,10 +56,10 @@ export function mongooseTypeToJsonSchemaType(type: MongooseSchemaPrimitiveType |
       return 'number';
     case Boolean:
       return 'boolean';
-    case Date:
-      return 'string'; // JSON Schema uses "string" for dates
-    case Buffer:
-      return 'string'; // JSON Schema uses "string" for binary data
+    // case Date:
+    //   return 'string'; // JSON Schema uses "string" for dates
+    // case Buffer:
+    //   return 'string'; // JSON Schema uses "string" for binary data
     case Array:
       return 'array';
     default:
@@ -107,9 +105,10 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
 
       propertySchema.type = mongooseTypeToJsonSchemaType(schemaTypeOpts.type);
 
-      if (schemaTypeOpts.type === Date) {
-        propertySchema.format = 'date-time';
-      } else if (propertySchema.type === 'string' && schemaTypeOpts.format) {
+      // if (schemaTypeOpts.type === Date) {
+      //   propertySchema.format = 'date-time';
+      // } else 
+      if (propertySchema.type === 'string' && schemaTypeOpts.format) {
         propertySchema.format = schemaTypeOpts.format;
       }
 
@@ -190,9 +189,9 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
     } else {
       propertySchema.type = mongooseTypeToJsonSchemaType(value as MongooseSchemaType);
 
-      if (value === Date) {
-        propertySchema.format = 'date-time';
-      }
+      // if (value === Date) {
+      //   propertySchema.format = 'date-time';
+      // }
 
       if (propertySchema.type === 'array' && Array.isArray(value)) {
         const arrayType = value[0];
