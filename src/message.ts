@@ -33,12 +33,12 @@ export class RetortMessage<T = string> {
     return this._data.content;
   }
 
-  get result() {
+  get result(): T {
     if (this.json) {
       return JSON.parse(this.content);
     }
     else {
-      return this.content;
+      return this.content as T;
     }
 
   }
