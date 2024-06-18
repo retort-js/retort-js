@@ -50,5 +50,5 @@ export function defineGeneration(
     });
 
     return retortMessage.promise;
-  };
+  } as any;
 }

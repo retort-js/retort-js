@@ -57,7 +57,7 @@ export class RetortMessage<T = string> {
     this.role = options.role;
     if ("content" in options) {
       this._data = { content: options.content };
-      this.promise = Promise.resolve(this) as any as RetortMessagePromise;
+      this.promise = Promise.resolve(this) as any as RetortMessagePromise<T>;
       this.promise.getStream = async function* () {
         yield { content: options.content, contentDelta: options.content };
         return;
@@ -74,7 +74,7 @@ export class RetortMessage<T = string> {
         }
         this._data = { content };
         return this;
-      })() as any as RetortMessagePromise;
+      })() as any as RetortMessagePromise<T>;
 
       this.promise.getStream = getStream;
 
@@ -83,7 +83,7 @@ export class RetortMessage<T = string> {
       this.promise = options.promise.then((content) => {
         this._data = { content };
         return this;
-      }) as any as RetortMessagePromise;
+      }) as any as RetortMessagePromise<T>;
       let promise = this.promise;
       this.promise.getStream = async function* () {
         yield { content: (await promise).content, contentDelta: (await promise).content };
