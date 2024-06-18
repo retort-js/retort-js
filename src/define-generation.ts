@@ -4,18 +4,24 @@ import { logMessage } from "./log-message";
 import { RetortMessage } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
 import teeAsync from "./tee-async";
+import { RetortObjectSchema } from "./tooling";
 
 export interface RetortMessagePromise extends Promise<RetortMessage> {
   stream: AsyncGenerator<string, void, unknown>;
 }
 
+interface RetortGenerationOptions {
+  name?: string;
+  description?: string;
+  parameters?: RetortObjectSchema;
+}
 
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
 ) {
-  return function generation(generationSettings?: Partial<RetortSettings>) {
+  return function generation(generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions>) {
     let streams = conversation.messagePromises.slice(0);
 
     let streamGenerator = teeAsync(
