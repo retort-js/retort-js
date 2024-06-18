@@ -1,19 +1,113 @@
 import { RetortSettings, RetortRole } from "./agent";
+import createStreamCloner from "./create-stream-cloner";
 import { id } from "./id";
 
-export class RetortMessage {
-  readonly id: string = id("msg");
+export interface RetortMessageData {
+  content: string;
+}
+
+export interface RetortMessagePromise extends Promise<RetortMessage> {
+  id: string;
   role: RetortRole;
-  content = "";
+  message: RetortMessage;
+  getStream(): AsyncGenerator<{ contentDelta: string, content: string }>;
+
+  /*
+  * @deprecated
+  * @see getStream
+  */
+  stream: AsyncGenerator<string>;
+}
+
+
+export class RetortMessage {
+  readonly id: string;
+  readonly role: RetortRole;
+  readonly promise: RetortMessagePromise;
+  private _data: null | { content: string } = null;
+
+  get content() {
+    if (this._data === null) {
+      throw new Error("Message not yet resolved; To fix this, you can await message.promise");
+    }
+    return this._data.content;
+  }
+
+  static createId() {
+    return id("msg");
+  }
+
+  private static async* createStreamFromPromise(promise: Promise<RetortMessage>) {
+    yield { content: (await promise).content, contentDelta: (await promise).content };
+  }
+
+  constructor(options: { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content: string, contentDelta: string }> } | { promise: Promise<string> })) {
+    this.id = options.id || RetortMessage.createId();
+    this.role = options.role;
+    if ("content" in options) {
+      this._data = { content: options.content };
+      this.promise = Promise.resolve(this) as any as RetortMessagePromise;
+      this.promise.getStream = async function* () {
+        yield { content: options.content, contentDelta: options.content };
+        return;
+      };
+    }
+    else if ("stream" in options) {
+      let content = "";
+
+      let getStream = createStreamCloner(options.stream);
+
+      this.promise = (async () => {
+        for await (const chunk of getStream()) {
+          content += chunk.contentDelta;
+        }
+        this._data = { content };
+        return this;
+      })() as any as RetortMessagePromise;
+
+      this.promise.getStream = getStream;
+
+    }
+    else if ("promise" in options) {
+      this.promise = options.promise.then((content) => {
+        this._data = { content };
+        return this;
+      }) as any as RetortMessagePromise;
+      let promise = this.promise;
+      this.promise.getStream = async function* () {
+        yield { content: (await promise).content, contentDelta: (await promise).content };
+        return;
+      };
+
+    }
+    else {
+      throw new Error("Invalid options passed to RetortMessage constructor; must include either 'content' or 'stream'");
+    }
+
+    this.promise.id = this.id;
+    this.promise.role = this.role;
+    this.promise.message = this;
+    let stream = this.promise.getStream();
+    this.promise.stream = (async function* () {
+      for await (let chunk of stream) {
+        yield chunk.content;
+      }
+
+    })();
+  }
 
   toString() {
     return this.content;
   }
-
-  constructor({ role, content }: { role: RetortRole; content: string }) {
-    this.role = role;
-    this.content = content;
+  
+  toJSON() {
+    return {
+      id: this.id,
+      role: this.role,
+      content: this.content,
+    };
   }
+
 }
 
 export type RetortValue =

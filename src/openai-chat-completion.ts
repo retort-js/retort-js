@@ -5,7 +5,7 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/index";
 
 export async function* openAiChatCompletion(
   settings: RetortSettings,
-  messagePromises: (RetortMessage | Promise<RetortMessage>)[]
+  messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({
     apiKey: process.env["OPENAI_API_KEY"],
@@ -23,7 +23,7 @@ export async function* openAiChatCompletion(
   const chatCompletion = await openai.chat.completions.create({
     messages: messages,
 
-    model: settings.model,
+    model: settings.model.toString(),
     frequency_penalty: undefined,
     function_call: undefined,
     functions: undefined,
@@ -64,9 +64,9 @@ export async function* openAiChatCompletion(
   //     }
 
   //     return content
-
   for await (const chunk of chatCompletion) {
-    const content = chunk.choices[0]?.delta?.content || "";
-    yield content;
+    const contentDelta = chunk.choices[0]?.delta?.content || "";
+    content += contentDelta
+    yield {content, contentDelta};
   }
 }
