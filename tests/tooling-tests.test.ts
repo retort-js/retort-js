@@ -13,7 +13,7 @@ describe('convertMongooseToJsonSchema', () => {
       properties: {
         name: { type: 'string' },
         age: { type: 'number' },
-        createdAt: { type: 'string', format: 'date-time' },
+        createdAt: { type: 'string' },
       },
       required: ['name', 'createdAt'],
     };
@@ -126,7 +126,7 @@ describe('convertMongooseToJsonSchema', () => {
       properties: {
         name: { type: 'string' },
         age: { type: 'number' },
-        createdAt: { type: 'string', format: 'date-time' },
+        createdAt: { type: 'string' },
       },
       required: ['name', 'age', 'createdAt'],
     };
@@ -147,7 +147,7 @@ describe('convertMongooseToJsonSchema', () => {
       properties: {
         name: { type: 'string' },
         age: { type: 'number' },
-        createdAt: { type: 'string', format: 'date-time' },
+        createdAt: { type: 'string' },
       },
       required: ['name', 'createdAt'],
     };
