@@ -1,4 +1,4 @@
-import { MongooseSchemaPrimitiveType, MongooseSchemaDefinition } from "./tooling-tests.test";
+import { MongooseSchemaPrimitiveType, MongooseSchemaDefinition } from "../src/tooling";
 
 // Define the type mapping logic
 type PrimitiveTypeMapping<T> =
