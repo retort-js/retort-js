@@ -1,4 +1,4 @@
-import { MongooseSchemaPrimitiveType, MongooseSchemaDefinition } from "../src/tooling";
+import { RetortPrimitiveSchema, RetortObjectSchema } from "../src/tooling";
 
 // Define the type mapping logic
 type PrimitiveTypeMapping<T> =
@@ -10,18 +10,18 @@ type PrimitiveTypeMapping<T> =
   never;
 
 export type MongooseSchemaToType<T> = T extends { type: infer U }
-  ? U extends MongooseSchemaPrimitiveType
+  ? U extends RetortPrimitiveSchema
   ? PrimitiveTypeMapping<U>
   : U extends [infer V]
   ? MongooseSchemaToType<V>[]
-  : U extends MongooseSchemaDefinition
+  : U extends RetortObjectSchema
   ? { [K in keyof U]: MongooseSchemaToType<U[K]> }
   : never
-  : T extends MongooseSchemaPrimitiveType
+  : T extends RetortPrimitiveSchema
   ? PrimitiveTypeMapping<T>
   : T extends [infer U]
   ? MongooseSchemaToType<U>[]
-  : T extends MongooseSchemaDefinition
+  : T extends RetortObjectSchema
   ? { [K in keyof T]: MongooseSchemaToType<T[K]> }
   : never;
 

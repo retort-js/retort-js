@@ -18,18 +18,18 @@ export interface JsonSchema {
   const?: any;
 }
 
-export type MongooseSchemaPrimitiveType =
+export type RetortPrimitiveSchema =
   | StringConstructor
   | NumberConstructor
   | BooleanConstructor
   | ObjectConstructor
   | ArrayConstructor;
 
-export type MongooseSchemaType = MongooseSchemaPrimitiveType | MongooseSchemaDefinition | [MongooseSchemaType];
+export type RetortSchema = RetortPrimitiveSchema | RetortObjectSchema | [RetortSchema];
 
-export interface MongooseSchemaDefinition {
+export interface RetortObjectSchema {
   [key: string]: {
-    type: MongooseSchemaType;
+    type: RetortSchema;
     optional?: boolean;
     enum?: string[];
     description?: string;
@@ -45,10 +45,10 @@ export interface MongooseSchemaDefinition {
     multipleOf?: number;
     const?: any;
     value?: any;
-  } | MongooseSchemaType;
+  } | RetortSchema;
 }
 
-export function mongooseTypeToJsonSchemaType(type: MongooseSchemaPrimitiveType | MongooseSchemaDefinition | [MongooseSchemaType]): string {
+export function retortSchemaToJsonSchemaTypeString(type: RetortSchema): string {
   switch (type) {
     case String:
       return 'string';
@@ -56,6 +56,8 @@ export function mongooseTypeToJsonSchemaType(type: MongooseSchemaPrimitiveType |
       return 'number';
     case Boolean:
       return 'boolean';
+    case Object:
+      return 'object';
     // case Date:
     //   return 'string'; // JSON Schema uses "string" for dates
     // case Buffer:
@@ -73,20 +75,20 @@ export function mongooseTypeToJsonSchemaType(type: MongooseSchemaPrimitiveType |
   }
 }
 
-export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefinition): JsonSchema {
+export function retortSchemaToJsonSchema(retortSchema: RetortObjectSchema): JsonSchema {
   const jsonSchema: JsonSchema = {
     type: 'object',
     properties: {},
     required: [],
   };
 
-  for (const [key, value] of Object.entries(mongooseSchema)) {
+  for (const [key, value] of Object.entries(retortSchema)) {
     const propertySchema: JsonSchema = {} as JsonSchema;
 
     if (typeof value === 'object' && !Array.isArray(value) && 'type' in value) {
       const schemaTypeOpts = value as {
         enum?: string[] | undefined;
-        type: MongooseSchemaType;
+        type: RetortSchema;
         optional?: boolean;
         description?: string;
         nullable?: boolean;
@@ -103,7 +105,7 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
         value?: any;
       };
 
-      propertySchema.type = mongooseTypeToJsonSchemaType(schemaTypeOpts.type);
+      propertySchema.type = retortSchemaToJsonSchemaTypeString(schemaTypeOpts.type);
 
       // if (schemaTypeOpts.type === Date) {
       //   propertySchema.format = 'date-time';
@@ -119,12 +121,12 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
       if (propertySchema.type === 'array' && Array.isArray(schemaTypeOpts.type)) {
         const arrayType = schemaTypeOpts.type[0];
         if (typeof arrayType === 'object' && 'type' in arrayType) {
-          propertySchema.items = convertMongooseToJsonSchema({ item: arrayType }).properties?.['item'];
+          propertySchema.items = retortSchemaToJsonSchema({ item: arrayType }).properties?.['item'];
         } else {
-          propertySchema.items = { type: mongooseTypeToJsonSchemaType(arrayType) };
+          propertySchema.items = { type: retortSchemaToJsonSchemaTypeString(arrayType) };
         }
       } else if (propertySchema.type === 'object') {
-        const nestedSchema = convertMongooseToJsonSchema(schemaTypeOpts.type as MongooseSchemaDefinition);
+        const nestedSchema = retortSchemaToJsonSchema(schemaTypeOpts.type as RetortObjectSchema);
         propertySchema.properties = nestedSchema.properties;
         if (nestedSchema.required) {
           propertySchema.required = nestedSchema.required;
@@ -187,7 +189,7 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
         jsonSchema.required!.push(key);
       }
     } else {
-      propertySchema.type = mongooseTypeToJsonSchemaType(value as MongooseSchemaType);
+      propertySchema.type = retortSchemaToJsonSchemaTypeString(value as RetortSchema);
 
       // if (value === Date) {
       //   propertySchema.format = 'date-time';
@@ -196,12 +198,12 @@ export function convertMongooseToJsonSchema(mongooseSchema: MongooseSchemaDefini
       if (propertySchema.type === 'array' && Array.isArray(value)) {
         const arrayType = value[0];
         if (typeof arrayType === 'object' && 'type' in arrayType) {
-          propertySchema.items = convertMongooseToJsonSchema({ item: arrayType }).properties?.['item'];
+          propertySchema.items = retortSchemaToJsonSchema({ item: arrayType }).properties?.['item'];
         } else {
-          propertySchema.items = { type: mongooseTypeToJsonSchemaType(arrayType) };
+          propertySchema.items = { type: retortSchemaToJsonSchemaTypeString(arrayType) };
         }
       } else if (propertySchema.type === 'object') {
-        propertySchema.properties = convertMongooseToJsonSchema(value as MongooseSchemaDefinition).properties;
+        propertySchema.properties = retortSchemaToJsonSchema(value as RetortObjectSchema).properties;
       }
 
       jsonSchema.properties![key] = propertySchema;

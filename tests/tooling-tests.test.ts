@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { convertMongooseToJsonSchema, JsonSchema, MongooseSchemaDefinition } from '../src/tooling';
+import { retortSchemaToJsonSchema, JsonSchema, RetortObjectSchema } from '../src/tooling';
 describe('convertMongooseToJsonSchema', () => {
   it('should convert a simple Mongoose schema to JSON schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       name: { type: String, optional: false },
       age: { type: Number, optional: true },
-      createdAt: { type: Date, optional: false },
+      createdAt: { type: String, optional: false },
     };
 
     const expectedJsonSchema: JsonSchema = {
@@ -18,12 +18,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['name', 'createdAt'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle nested objects in Mongoose schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       user: {
         type: {
           name: { type: String, optional: false },
@@ -48,12 +48,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['user'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle arrays in Mongoose schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       tags: { type: [String], optional: true },
     };
 
@@ -67,12 +67,12 @@ describe('convertMongooseToJsonSchema', () => {
       },
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle complex nested structures', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       user: {
         type: {
           name: { type: String, optional: false },
@@ -110,15 +110,15 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['user'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle shorthand declarations in Mongoose schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       name: String,
       age: Number,
-      createdAt: Date,
+      createdAt: String,
     };
 
     const expectedJsonSchema: JsonSchema = {
@@ -131,15 +131,15 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['name', 'age', 'createdAt'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle mixed shorthand and verbose declarations in Mongoose schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       name: String,
       age: { type: Number, optional: true },
-      createdAt: { type: Date, optional: false },
+      createdAt: { type: String, optional: false },
     };
 
     const expectedJsonSchema: JsonSchema = {
@@ -152,12 +152,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['name', 'createdAt'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle longhand declarations inside arrays in Mongoose schema', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       tags: { type: [{ type: String }], optional: true },
     };
 
@@ -171,12 +171,12 @@ describe('convertMongooseToJsonSchema', () => {
       },
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "enum" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       status: { type: String, enum: ['active', 'inactive'], optional: false },
     };
 
@@ -191,12 +191,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['status'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "description" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       status: { type: String, description: 'The status of the entity', optional: false },
     };
 
@@ -211,12 +211,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['status'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "nullable" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       name: { type: String, nullable: true, optional: false },
     };
 
@@ -230,12 +230,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['name'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "minLength" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       username: { type: String, minLength: 3, optional: false },
     };
 
@@ -250,12 +250,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['username'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "maxLength" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       username: { type: String, maxLength: 20, optional: false },
     };
 
@@ -270,12 +270,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['username'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "pattern" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       username: { type: String, pattern: '^[a-zA-Z0-9_]+$', optional: false },
     };
 
@@ -290,12 +290,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['username'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "format" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       email: { type: String, format: 'email', optional: false },
     };
 
@@ -310,12 +310,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['email'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "minimum" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       age: { type: Number, minimum: 18, optional: false },
     };
 
@@ -330,12 +330,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['age'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "maximum" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       age: { type: Number, maximum: 65, optional: false },
     };
 
@@ -350,12 +350,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['age'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "exclusiveMinimum" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       age: { type: Number, exclusiveMinimum: 18, optional: false },
     };
 
@@ -370,12 +370,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['age'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "exclusiveMaximum" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       age: { type: Number, exclusiveMaximum: 65, optional: false },
     };
 
@@ -390,12 +390,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['age'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "multipleOf" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       age: { type: Number, multipleOf: 5, optional: false },
     };
 
@@ -410,12 +410,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['age'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "const" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       status: { type: String, const: 'active', optional: false },
     };
 
@@ -430,12 +430,12 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['status'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should handle "value" property', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       status: { type: String, value: 'active', optional: false },
     };
 
@@ -450,15 +450,15 @@ describe('convertMongooseToJsonSchema', () => {
       required: ['status'],
     };
 
-    const jsonSchema = convertMongooseToJsonSchema(mongooseSchema);
+    const jsonSchema = retortSchemaToJsonSchema(mongooseSchema);
     expect(jsonSchema).toEqual(expectedJsonSchema);
   });
 
   it('should throw error if both "const" and "value" are specified', () => {
-    const mongooseSchema: MongooseSchemaDefinition = {
+    const mongooseSchema: RetortObjectSchema = {
       status: { type: String, const: 'active', value: 'inactive', optional: false },
     };
 
-    expect(() => convertMongooseToJsonSchema(mongooseSchema)).toThrow(Error);
+    expect(() => retortSchemaToJsonSchema(mongooseSchema)).toThrow(Error);
   });
 });

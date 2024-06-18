@@ -9,6 +9,7 @@ export interface RetortMessagePromise extends Promise<RetortMessage> {
   stream: AsyncGenerator<string, void, unknown>;
 }
 
+
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
