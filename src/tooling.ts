@@ -217,3 +217,28 @@ export function retortSchemaToJsonSchema(retortSchema: RetortObjectSchema): Json
 
   return jsonSchema;
 }
+
+// Define the type mapping logic
+type PrimitiveTypeMapping<T> =
+  T extends StringConstructor ? string :
+  T extends NumberConstructor ? number :
+  T extends BooleanConstructor ? boolean :
+  T extends ObjectConstructor ? object :
+  T extends ArrayConstructor ? any[] :
+  never;
+
+export type RetortSchemaToType<T> = T extends { type: infer U }
+  ? U extends RetortPrimitiveSchema
+  ? PrimitiveTypeMapping<U>
+  : U extends [infer V]
+  ? RetortSchemaToType<V>[]
+  : U extends RetortObjectSchema
+  ? { [K in keyof U]: RetortSchemaToType<U[K]> }
+  : never
+  : T extends RetortPrimitiveSchema
+  ? PrimitiveTypeMapping<T>
+  : T extends [infer U]
+  ? RetortSchemaToType<U>[]
+  : T extends RetortObjectSchema
+  ? { [K in keyof T]: RetortSchemaToType<T[K]> }
+  : never;
