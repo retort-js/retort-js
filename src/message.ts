@@ -6,7 +6,7 @@ export interface RetortMessageData {
   content: string;
 }
 
-export interface RetortMessagePromise<T = string> extends Promise<RetortMessage> {
+export interface RetortMessagePromise<T = string> extends Promise<RetortMessage<T>> {
   id: string;
   role: RetortRole;
   message: RetortMessage<T>;
@@ -22,7 +22,7 @@ export interface RetortMessagePromise<T = string> extends Promise<RetortMessage>
 export class RetortMessage<T = string> {
   id: string;
   role: RetortRole;
-  promise: RetortMessagePromise;
+  promise: RetortMessagePromise<T>;
   json: boolean;
   private _data: null | { content: string } = null;
 

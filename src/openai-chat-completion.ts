@@ -6,7 +6,7 @@ import { RetortGenerationOptions } from "./define-generation";
 import { retortSchemaToJsonSchema } from "./tooling";
 
 export async function* openAiChatCompletion(
-  settings: RetortSettings & Partial<RetortGenerationOptions>,
+  settings: RetortSettings & Partial<RetortGenerationOptions<any>>,
   messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({

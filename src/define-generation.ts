@@ -15,13 +15,13 @@ export interface RetortGenerationOptions<T extends RetortObjectSchema | undefine
 }
 
 // If the user specifies parameters, we return a RetortJsonMessage. Otherwise, we return a RetortMessage.
-type MapToSchemaType<T extends RetortObjectSchema | undefined> = T extends RetortObjectSchema ? RetortMessage<RetortSchemaToType<T>> : RetortMessage;
+type MapToSchemaType<T extends RetortObjectSchema | undefined> = T extends RetortObjectSchema ? RetortSchemaToType<T> : string;
 
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-): <T extends RetortObjectSchema | undefined>(generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions<T>>) => RetortMessagePromise<T> {
+): <T extends RetortObjectSchema | undefined>(generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions<T>>) => RetortMessagePromise<MapToSchemaType<T>> {
   return function generation(generationSettings?: Partial<RetortSettings>) {
     let settings = { ...conversation.settings, ...generationSettings }
     let promises = conversation.messages.map((message) => message.promise);
