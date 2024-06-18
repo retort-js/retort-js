@@ -2,9 +2,11 @@ import OpenAI from "openai";
 import { RetortSettings } from "./agent";
 import { RetortMessage as RetortMessage } from "./message";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index";
+import { RetortGenerationOptions } from "./define-generation";
+import { retortSchemaToJsonSchema } from "./tooling";
 
 export async function* openAiChatCompletion(
-  settings: RetortSettings,
+  settings: RetortSettings & Partial<RetortGenerationOptions>,
   messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({
@@ -20,7 +22,9 @@ export async function* openAiChatCompletion(
     });
   }
 
-  const chatCompletion = await openai.chat.completions.create({
+
+  let body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
+
     messages: messages,
 
     model: settings.model.toString(),
@@ -49,7 +53,25 @@ export async function* openAiChatCompletion(
     top_logprobs: undefined,
     top_p: settings.topP,
     user: undefined,
-  });
+  };
+
+  if (settings.parameters) {
+    var parameters = retortSchemaToJsonSchema(settings.parameters);
+    var tool = {
+      type: "function",
+      function: {
+        name: settings.name ?? "answer",
+        description: settings.description,
+        parameters: parameters as any,
+      }
+
+    } as OpenAI.Chat.Completions.ChatCompletionTool;
+
+    body.tools = [tool];
+    body.tool_choice = { type: "function", function: { name: tool.function.name } };
+  }
+
+  const chatCompletion = await openai.chat.completions.create(body);
 
   let content = "";
 
@@ -67,6 +89,6 @@ export async function* openAiChatCompletion(
   for await (const chunk of chatCompletion) {
     const contentDelta = chunk.choices[0]?.delta?.content || "";
     content += contentDelta
-    yield {content, contentDelta};
+    yield { content, contentDelta };
   }
 }

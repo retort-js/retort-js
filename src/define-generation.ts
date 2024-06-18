@@ -4,12 +4,11 @@ import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
 import { RetortMessage, RetortMessagePromise } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
-import teeAsync from "./tee-async";
 import { RetortObjectSchema } from "./tooling";
 
 
 
-interface RetortGenerationOptions {
+export interface RetortGenerationOptions {
   name?: string;
   description?: string;
   parameters?: RetortObjectSchema;
@@ -19,7 +18,7 @@ export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-): (generationSettings?: Partial<RetortSettings>) => RetortMessagePromise {
+): (generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions>) => RetortMessagePromise {
   return function generation(generationSettings?: Partial<RetortSettings>) {
     let settings = { ...conversation.settings, ...generationSettings}
     let promises = conversation.messages.map((message) => message.promise);
@@ -28,9 +27,6 @@ export function defineGeneration(
     
     if (settings?.model?.startsWith("claude-")) {
       var stream = claudeChatCompletion(conversation.settings, promises);
-    }
-    else if (settings?.model?.startsWith("gpt-")) {
-      stream = openAiChatCompletion(conversation.settings, promises);
     }
     else {
       // Default to OpenAI.
