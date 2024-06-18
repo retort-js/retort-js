@@ -2,11 +2,11 @@ import OpenAI from "openai";
 import { RetortSettings } from "./agent";
 import { RetortMessage as RetortMessage } from "./message";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index";
-import { RetortGenerationOptions } from "./define-generation";
+import { RetortParamaterization } from "./define-generation";
 import { retortSchemaToJsonSchema } from "./tooling";
 
 export async function* openAiChatCompletion(
-  settings: RetortSettings & Partial<RetortGenerationOptions<any>>,
+  settings: RetortSettings & Partial<RetortParamaterization<any>>,
   messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({
@@ -66,7 +66,7 @@ export async function* openAiChatCompletion(
       }
 
     } as OpenAI.Chat.Completions.ChatCompletionTool;
-    
+
     body.tools = [tool];
     body.tool_choice = { type: "function", function: { name: tool.function.name } };
   }

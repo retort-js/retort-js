@@ -8,10 +8,10 @@ import { RetortObjectSchema, RetortSchemaToType } from "./tooling";
 
 
 
-export interface RetortGenerationOptions<T extends RetortObjectSchema | undefined> {
+export interface RetortParamaterization<T extends RetortObjectSchema | undefined> {
   name?: string;
   description?: string;
-  parameters?: T;
+  parameters: T;
 }
 
 // If the user specifies parameters, we return a RetortJsonMessage. Otherwise, we return a RetortMessage.
@@ -21,7 +21,7 @@ export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-): <T extends RetortObjectSchema | undefined>(generationSettings?: Partial<RetortSettings> & Partial<RetortGenerationOptions<T>>) => RetortMessagePromise<MapToSchemaType<T>> {
+): <T extends RetortObjectSchema | undefined = undefined>(generationSettings?: Partial<RetortSettings> & (RetortParamaterization<T> | {})) => RetortMessagePromise<MapToSchemaType<T>> {
   return function generation(generationSettings?: Partial<RetortSettings>) {
     let settings = { ...conversation.settings, ...generationSettings }
     let promises = conversation.messages.map((message) => message.promise);
