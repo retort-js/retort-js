@@ -85,4 +85,4 @@ export function retort<T>(chatFunction: ChatFunction<T>): Retort<T> {
   return returnedModule;
 }
 
-type ChatFunction<T> = ($: RetortConversation, ...values: any[]) => T;
+export type ChatFunction<T> = ($: RetortConversation, ...values: any[]) => T;

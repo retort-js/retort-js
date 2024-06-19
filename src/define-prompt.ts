@@ -26,7 +26,7 @@ export function definePrompt(conversation: RetortConversation, role: "user" | "a
 
 
     if (push) {
-      conversation.messagePromises.push(message);
+      conversation.messages.push(message);
       logMessage(message);
     }
 

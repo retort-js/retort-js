@@ -8,12 +8,22 @@ import readline from "readline";
 
 export const inputStore = new Map<string, (value: string) => void>();
 
-export interface RetortInputPromise extends Promise<RetortMessage> {
+export class RetortInputMessage extends RetortMessage {
   inputId: string;
-  retortType: "inputPromise";
+  retortType: "inputMessage";
   inputQuery?: string;
-}
 
+  constructor(options: { inputId: string, inputQuery?:string, role: RetortRole, promise: Promise<string> }) {
+    super(options);
+    this.inputId = options.inputId;
+    this.retortType = "inputMessage";
+    this.inputQuery = options.inputQuery;
+    (this.promise as any).inputId = options.inputId;
+    (this.promise as any).retortType = "inputPromise";
+    (this.promise as any).inputQuery = options.inputQuery;
+
+  }
+}
 
 export function defineInput(
   conversation: RetortConversation,
@@ -24,33 +34,29 @@ export function defineInput(
     const inputId = id("input");
     const inputQuery = inputSettings?.query;
 
-    let fromExternal = new Promise<RetortMessage>((resolve) => {
-      inputStore.set(inputId, (value: string) => {
-        resolve(new RetortMessage({ role, content: value }));
+    let fromExternal = new Promise<string>((resolve) => {
+      inputStore.set(inputId, (content: string) => {
+        resolve(content);
       });
     });
 
-    let fromConsole = askQuestion((inputQuery ??  "input:").trim() + " ", fromExternal).then((content) => {
-      return new RetortMessage({ role, content });
-    });
+    let fromConsole = askQuestion((inputQuery ??  "input:").trim() + " ", fromExternal);
 
-    let m = Promise.race([fromConsole, fromExternal]) as RetortInputPromise;
-    m.inputId = inputId;
-    m.retortType = "inputPromise"
-    m.inputQuery = inputQuery;
+    let contentPromise = Promise.race([fromConsole, fromExternal]);
 
     if (push) {
-      conversation.messagePromises.push(m);
-      m.then((m) => logMessage(m));
+      let message = new RetortInputMessage({ inputId, inputQuery, role, promise: contentPromise });
+      conversation.messages.push(message);
+      message.promise.then((m) => logMessage(m));
     }
 
-    return m;
+    return contentPromise;
   };
 }
 
 function askQuestion(
   query: string,
-  answeredElsewhere: Promise<RetortMessage>
+  answeredElsewhere: Promise<string>
 ): Promise<string> {
   let hasBeenCleanedUp = false;
 
@@ -71,12 +77,12 @@ function askQuestion(
   var resolved = false;
 
   return new Promise((resolve) => {
-    answeredElsewhere.then((ans: RetortMessage) => {
+    answeredElsewhere.then((ans) => {
       if (!resolved) {
         resolved = true;
         cleanupConsole(1);
 
-        resolve(ans.content);
+        resolve(ans);
       }
     });
 

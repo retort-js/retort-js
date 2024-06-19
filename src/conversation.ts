@@ -1,4 +1,4 @@
-import { RetortSettings, agent } from "./agent";
+import { RetortModel, RetortSettings, agent } from "./agent";
 import { RetortMessage, RetortValue, RetortValueArray } from "./message";
 import { id } from "./id";
 import { RetortExtendableFunction } from "./extendable-function";
@@ -14,8 +14,10 @@ export interface RetortScriptImport<T> {
 
 export class RetortConversation extends RetortExtendableFunction {
     readonly id = id("cnv");
-    readonly chat = this;
-    readonly messagePromises: (RetortMessage | Promise<RetortMessage>)[] = [];
+    /**
+     * @deprecated
+     */
+    readonly chat = this; 
 
     protected get __wrappedFunction() {
         return this.prompt;
@@ -33,8 +35,8 @@ export class RetortConversation extends RetortExtendableFunction {
         return this.settings.model;
     }
 
-    set model(value: string) {
-        this.settings.model = value;
+    set model(value: RetortModel) {
+        this.settings.model = value.toString();
     }
 
     get temperature() {
@@ -53,16 +55,16 @@ export class RetortConversation extends RetortExtendableFunction {
         this.settings.topP = value;
     }
 
+    readonly messages: RetortMessage[] = [];
 
-    get messages(): RetortMessage[] {
-        for (let m of this.messagePromises) {
-            console.log("messagePromises", m, this.messagePromises)
-            if (!(m instanceof RetortMessage)) {
-                throw new Error("Cannot access messages until all promises have resolved.");
-            }
-        }
-        return this.messagePromises as RetortMessage[];
+    /**
+     * Use the promise property of each message to get an array of promises
+     * @deprecated
+     */
+    get messagePromises() {
+        return this.messages.map((m) => m.promise);
     }
+
     user = agent(this, "user");
     assistant = agent(this, "assistant");
     system = agent(this, "system");
@@ -75,10 +77,14 @@ export class RetortConversation extends RetortExtendableFunction {
         return defineGeneration(this, "assistant", false);
     }
 
-    get prompt() {
+    private get prompt() {
         return definePrompt(this, "user", false);
     }
 
+    /**
+     * Use the toJSON method
+     * @deprecated
+     */
     toObject(messages: RetortMessage[] = this.messages): SerializableRetortConversation {
         return {
             id: this.id,
@@ -87,11 +93,22 @@ export class RetortConversation extends RetortExtendableFunction {
         }
     }
 
-    // TODO: not sure this is right as we're losing the original id
+    toJSON(): SerializableRetortConversation {
+        return {
+            id: this.id,
+            settings: this.settings,
+            messages: this.messages,
+        }
+    }
+
+    /**
+     * If you need this create a fromJSON method
+     * @deprecated
+     */
     static fromObject(obj: SerializableRetortConversation) {
         const conversation = new RetortConversation();
         conversation.settings = obj.settings;
-        conversation.messagePromises.push(...obj.messages);
+        conversation.messages.push(...obj.messages);
         return conversation;
     }
 }
