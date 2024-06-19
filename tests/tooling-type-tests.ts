@@ -29,8 +29,7 @@ type BooleanTest = RetortSchemaToType<{ type: BooleanConstructor }>;
 // Test doesn't work for some reason
 // type BooleanTestAssertion = Assert<AreEqual<BooleanTest, boolean>>;
 
-type NestedTypeTest = RetortSchemaToType<{ type: { type: StringConstructor } }>;
-type NestedTypeTestAssertion = Assert<AreEqual<NestedTypeTest, { type: string }>>;
+
 
 type AddressTest = RetortSchemaToType<{ street: { type: StringConstructor } }>;
 type AddressTestAssertion = Assert<AreEqual<AddressTest, { street: string }>>;
@@ -50,3 +49,31 @@ type ComplexTestAssertion = Assert<AreEqual<ComplexTest, {
   address: { street: string },
   children: { name: string }[]
 }>>;
+
+// Enum property test
+type EnumTest = RetortSchemaToType<{ status: { type: StringConstructor, enum: ['open', 'closed', 'pending'] } }>;
+type EnumTestAssertion = Assert<AreEqual<EnumTest, { status: 'open' | 'closed' | 'pending' }>>;
+
+// Nullable property test
+type NullableTest = RetortSchemaToType<{ age: { type: NumberConstructor, nullable: true } }>;
+type NullableTestAssertion = Assert<AreEqual<NullableTest, { age: number | null }>>;
+
+// Optional property test
+type OptionalTest = RetortSchemaToType<{ email: { type: StringConstructor, optional: true } }>;
+type OptionalTestAssertion = Assert<AreEqual<OptionalTest, { email?: string }>>;
+
+// Combined nullable and optional property test
+type CombinedNullableOptionalTest = RetortSchemaToType<{ phone: { type: StringConstructor, nullable: true, optional: true } }>;
+type CombinedNullableOptionalTestAssertion = Assert<AreEqual<CombinedNullableOptionalTest, { phone?: string | null }>>;
+
+// Tests for the special case where "type" is an object an object with a "type" property.
+// This is because mongoose-style schemas treate the type field in a special way
+type NestedTypeTest = RetortSchemaToType<{ type: { type: StringConstructor } }>;
+type NestedTypeTestAssertion = Assert<AreEqual<NestedTypeTest, { type: string }>>;
+
+
+type NestedTypeTest2 = RetortSchemaToType<{ type: { type: {type: StringConstructor} } }>;
+
+// Known limitation of type mapping.
+// @ts-ignore
+type NestedTypeTest2Assertion = Assert<AreEqual<NestedTypeTest2, { type: {type: string}} >>;

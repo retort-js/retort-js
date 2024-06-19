@@ -227,26 +227,24 @@ type PrimitiveTypeMapping<T> =
   T extends ArrayConstructor ? any[] :
   never;
 
-export type RetortSchemaToType<T> = T extends { type: infer U; nullable: true }
-  ? U extends RetortPrimitiveSchema
-  ? PrimitiveTypeMapping<U> | null
-  : U extends [infer V]
-  ? RetortSchemaToType<V>[] | null
-  : U extends RetortObjectSchema
-  ? { [K in keyof U]: RetortSchemaToType<U[K]> } | null
-  : never
-  : T extends { type: infer U }
-  ? U extends RetortPrimitiveSchema
-  ? PrimitiveTypeMapping<U>
-  : U extends [infer V]
-  ? RetortSchemaToType<V>[]
-  : U extends RetortObjectSchema
-  ? { [K in keyof U]: RetortSchemaToType<U[K]> }
-  : never
-  : T extends RetortPrimitiveSchema
-  ? PrimitiveTypeMapping<T>
-  : T extends [infer U]
-  ? RetortSchemaToType<U>[]
-  : T extends RetortObjectSchema
-  ? { [K in keyof T]: RetortSchemaToType<T[K]> }
+// Handles the case where the schema object has a 'type' field
+type ExtractType<T> = T extends { type: infer U } 
+  ? U extends RetortPrimitiveSchema 
+    ? PrimitiveTypeMapping<U> 
+    : U extends [infer V] 
+      ? RetortSchemaToType<V>[] 
+      : U extends RetortObjectSchema 
+        ? { [K in keyof U]: RetortSchemaToType<U[K]> }
+        : never 
   : never;
+
+// Main type mapping logic combining all cases
+export type RetortSchemaToType<T> = ExtractType<T> extends never 
+  ? T extends RetortPrimitiveSchema 
+    ? PrimitiveTypeMapping<T> 
+    : T extends [infer U] 
+      ? RetortSchemaToType<U>[] 
+      : T extends RetortObjectSchema 
+        ? { [K in keyof T]: RetortSchemaToType<T[K]> }
+        : never 
+  : ExtractType<T>;
