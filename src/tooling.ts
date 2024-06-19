@@ -228,23 +228,28 @@ type PrimitiveTypeMapping<T> =
   never;
 
 // Handles the case where the schema object has a 'type' field
-type ExtractType<T> = T extends { type: infer U } 
-  ? U extends RetortPrimitiveSchema 
-    ? PrimitiveTypeMapping<U> 
-    : U extends [infer V] 
-      ? RetortSchemaToType<V>[] 
-      : U extends RetortObjectSchema 
-        ? { [K in keyof U]: RetortSchemaToType<U[K]> }
-        : never 
+type ExtractType<T> = T extends { type: infer U }
+  ? U extends RetortPrimitiveSchema
+  ? PrimitiveTypeMapping<U>
+  : U extends [infer V]
+  ? RetortSchemaToType<V>[]
+  : U extends RetortObjectSchema
+  ? { [K in keyof U]: RetortSchemaToType<U[K]> }
+  : never
   : never;
 
+type IncludeNullability<T, U> = T extends { nullable: true } ? U | null : U;
+type IncludeOptional<T, U> = T extends { optional: true } ? U | undefined : U;
+type IncludeEnum<T, U> = T extends { type: StringConstructor, enum: infer V } ? V extends string[] ? V[number] : never : U;
+type CombinedIncludes<T, U> = IncludeEnum<T, IncludeOptional<T, IncludeNullability<T, U>>>;
+
 // Main type mapping logic combining all cases
-export type RetortSchemaToType<T> = ExtractType<T> extends never 
-  ? T extends RetortPrimitiveSchema 
-    ? PrimitiveTypeMapping<T> 
-    : T extends [infer U] 
-      ? RetortSchemaToType<U>[] 
-      : T extends RetortObjectSchema 
-        ? { [K in keyof T]: RetortSchemaToType<T[K]> }
-        : never 
-  : ExtractType<T>;
+export type RetortSchemaToType<T> = ExtractType<T> extends never
+  ? T extends RetortPrimitiveSchema
+  ? PrimitiveTypeMapping<T>
+  : T extends [infer U]
+  ? RetortSchemaToType<U>[]
+  : T extends RetortObjectSchema
+  ? { [K in keyof T]: RetortSchemaToType<T[K]> }
+  : never
+  : CombinedIncludes<T, ExtractType<T>>;

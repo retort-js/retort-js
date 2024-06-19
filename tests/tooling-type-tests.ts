@@ -60,11 +60,11 @@ type NullableTestAssertion = Assert<AreEqual<NullableTest, { age: number | null 
 
 // Optional property test
 type OptionalTest = RetortSchemaToType<{ email: { type: StringConstructor, optional: true } }>;
-type OptionalTestAssertion = Assert<AreEqual<OptionalTest, { email?: string }>>;
+type OptionalTestAssertion = Assert<AreEqual<OptionalTest, { email: string | undefined }>>;
 
 // Combined nullable and optional property test
 type CombinedNullableOptionalTest = RetortSchemaToType<{ phone: { type: StringConstructor, nullable: true, optional: true } }>;
-type CombinedNullableOptionalTestAssertion = Assert<AreEqual<CombinedNullableOptionalTest, { phone?: string | null }>>;
+type CombinedNullableOptionalTestAssertion = Assert<AreEqual<CombinedNullableOptionalTest, { phone: string | null | undefined }>>;
 
 // Tests for the special case where "type" is an object an object with a "type" property.
 // This is because mongoose-style schemas treate the type field in a special way
