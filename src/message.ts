@@ -1,6 +1,8 @@
+import { _decodeChunks } from "openai/streaming.mjs";
 import { RetortSettings, RetortRole } from "./agent";
 import createStreamCloner from "./create-stream-cloner";
 import { id } from "./id";
+import { Retort } from "./retort";
 
 export interface RetortMessageData {
   content: string;
@@ -10,7 +12,7 @@ export interface RetortMessagePromise<T = string> extends Promise<RetortMessage<
   id: string;
   role: RetortRole;
   message: RetortMessage<T>;
-  getStream(): AsyncGenerator<{ contentDelta: string, content: string }>;
+  getStream(): AsyncGenerator<Retort>;
 
   /*
   * @deprecated
@@ -19,11 +21,23 @@ export interface RetortMessagePromise<T = string> extends Promise<RetortMessage<
   stream: AsyncGenerator<string>;
 }
 
+export interface RetortChunk {
+  content: string;
+  contentDelta: string;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+}
+
 export class RetortMessage<T = string> {
   id: string;
   role: RetortRole;
   promise: RetortMessagePromise<T>;
   json: boolean;
+  promptTokens: number | undefined;
+  completionTokens: number | undefined;
+  totalTokens: number | undefined;
+
   private _data: null | { content: string } = null;
 
   get content() {
@@ -51,7 +65,7 @@ export class RetortMessage<T = string> {
     yield { content: (await promise).content, contentDelta: (await promise).content };
   }
 
-  constructor(options: { json?: boolean } & { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<{ content: string, contentDelta: string }> } | { promise: Promise<string> })) {
+  constructor(options: { json?: boolean } & { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<RetortChunk> } | { promise: Promise<string> })) {
     this.json = options.json ?? false;
     this.id = options.id || RetortMessage.createId();
     this.role = options.role;
@@ -105,6 +119,26 @@ export class RetortMessage<T = string> {
       }
 
     })();
+
+    let self = this;
+    (async () => {
+
+      for await (let chunk of self.promise.getStream()) {
+        if (chunk.promptTokens) {
+          self.promptTokens = chunk.promptTokens;
+        }
+
+        if (chunk.completionTokens) {
+          self.completionTokens = chunk.completionTokens;
+        }
+
+        if (chunk.totalTokens) {
+          self.totalTokens = chunk.totalTokens;
+        }
+
+      }
+    })()
+
   }
 
   toString() {

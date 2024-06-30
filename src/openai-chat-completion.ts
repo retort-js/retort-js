@@ -47,7 +47,7 @@ export async function* openAiChatCompletion(
     stop: undefined,
     stream: true,
     temperature: settings.temperature,
-
+    stream_options: { "include_usage": true },
     tool_choice: undefined,
     tools: undefined,
     top_logprobs: undefined,
@@ -92,6 +92,13 @@ export async function* openAiChatCompletion(
       ((chunk.choices[0]?.delta?.tool_calls ?? [])[0]?.function?.arguments)
       ?? "";
     content += contentDelta
-    yield { content, contentDelta };
+    yield {
+      content,
+      contentDelta,
+      completionTokens: chunk.usage?.completion_tokens,
+      promptTokens: chunk.usage?.prompt_tokens,
+      totalTokens: chunk.usage?.total_tokens,
+      chunk
+    };
   }
 }
