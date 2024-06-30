@@ -12,7 +12,7 @@ export interface RetortMessagePromise<T = string> extends Promise<RetortMessage<
   id: string;
   role: RetortRole;
   message: RetortMessage<T>;
-  getStream(): AsyncGenerator<Retort>;
+  getStream(): AsyncGenerator<RetortChunk>;
 
   /*
   * @deprecated
