@@ -1,19 +1,158 @@
+import { _decodeChunks } from "openai/streaming.mjs";
 import { RetortSettings, RetortRole } from "./agent";
+import createStreamCloner from "./create-stream-cloner";
 import { id } from "./id";
+import { Retort } from "./retort";
 
-export class RetortMessage {
-  readonly id: string = id("msg");
+export interface RetortMessageData {
+  content: string;
+}
+
+export interface RetortMessagePromise<T = string> extends Promise<RetortMessage<T>> {
+  id: string;
   role: RetortRole;
-  content = "";
+  message: RetortMessage<T>;
+  getStream(): AsyncGenerator<RetortChunk>;
+
+  /*
+  * @deprecated
+  * @see getStream
+  */
+  stream: AsyncGenerator<string>;
+}
+
+export interface RetortChunk {
+  content: string;
+  contentDelta: string;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
+}
+
+export class RetortMessage<T = string> {
+  id: string;
+  role: RetortRole;
+  promise: RetortMessagePromise<T>;
+  json: boolean;
+  promptTokens: number | undefined;
+  completionTokens: number | undefined;
+  totalTokens: number | undefined;
+
+  private _data: null | { content: string } = null;
+
+  get content() {
+    if (this._data === null) {
+      throw new Error("Message not yet resolved; To fix this, you can await message.promise");
+    }
+    return this._data.content;
+  }
+
+  get result(): T {
+    if (this.json) {
+      return JSON.parse(this.content);
+    }
+    else {
+      return this.content as T;
+    }
+
+  }
+
+  static createId() {
+    return id("msg");
+  }
+
+  private static async* createStreamFromPromise(promise: Promise<RetortMessage>) {
+    yield { content: (await promise).content, contentDelta: (await promise).content };
+  }
+
+  constructor(options: { json?: boolean } & { id?: string, role: RetortRole } & ({ content: string } | { stream: AsyncGenerator<RetortChunk> } | { promise: Promise<string> })) {
+    this.json = options.json ?? false;
+    this.id = options.id || RetortMessage.createId();
+    this.role = options.role;
+    if ("content" in options) {
+      this._data = { content: options.content };
+      this.promise = Promise.resolve(this) as any as RetortMessagePromise<T>;
+      this.promise.getStream = async function* () {
+        yield { content: options.content, contentDelta: options.content };
+        return;
+      };
+    }
+    else if ("stream" in options) {
+      let content = "";
+
+      let getStream = createStreamCloner(options.stream);
+
+      this.promise = (async () => {
+        for await (const chunk of getStream()) {
+          content += chunk.contentDelta;
+        }
+        this._data = { content };
+        return this;
+      })() as any as RetortMessagePromise<T>;
+
+      this.promise.getStream = getStream;
+
+    }
+    else if ("promise" in options) {
+      this.promise = options.promise.then((content) => {
+        this._data = { content };
+        return this;
+      }) as any as RetortMessagePromise<T>;
+      let promise = this.promise;
+      this.promise.getStream = async function* () {
+        yield { content: (await promise).content, contentDelta: (await promise).content };
+        return;
+      };
+
+    }
+    else {
+      throw new Error("Invalid options passed to RetortMessage constructor; must include either 'content' or 'stream'");
+    }
+
+    this.promise.id = this.id;
+    this.promise.role = this.role;
+    this.promise.message = this;
+    let stream = this.promise.getStream();
+    this.promise.stream = (async function* () {
+      for await (let chunk of stream) {
+        yield chunk.content;
+      }
+
+    })();
+
+    let self = this;
+    (async () => {
+
+      for await (let chunk of self.promise.getStream()) {
+        if (chunk.promptTokens) {
+          self.promptTokens = chunk.promptTokens;
+        }
+
+        if (chunk.completionTokens) {
+          self.completionTokens = chunk.completionTokens;
+        }
+
+        if (chunk.totalTokens) {
+          self.totalTokens = chunk.totalTokens;
+        }
+
+      }
+    })()
+
+  }
 
   toString() {
     return this.content;
   }
 
-  constructor({ role, content }: { role: RetortRole; content: string }) {
-    this.role = role;
-    this.content = content;
+  toJSON() {
+    return {
+      id: this.id,
+      role: this.role,
+      content: this.content,
+    };
   }
+
 }
 
 export type RetortValue =
@@ -87,11 +226,10 @@ function retortValueToString(currentValue: RetortValue | any) {
       if (currentValue.then && typeof currentValue.then === "function") {
         throw new Error("Promise passed to retort template. Use 'await' on the promise.");
       }
-      else
-      {
+      else {
         throw new Error("Plain object passed to retort template. If you want to see the object, you should use JSON.stringify.");
       }
-      
+
     }
 
     insertion = currentValue.toString();

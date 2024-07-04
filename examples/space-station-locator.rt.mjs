@@ -25,7 +25,9 @@ export default retort(async ($) => {
   Answer any question about the current location.
   `;
 
+  
+
   $.user`Where is the ISS currently?`;
 
-  await $.assistant.generation();
+  await $.assistant.generation({parameters: {latitude: Number, longitude: Number}});
 });

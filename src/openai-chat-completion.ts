@@ -2,10 +2,12 @@ import OpenAI from "openai";
 import { RetortSettings } from "./agent";
 import { RetortMessage as RetortMessage } from "./message";
 import { ChatCompletionMessageParam } from "openai/resources/chat/index";
+import { RetortParamaterization } from "./define-generation";
+import { retortSchemaToJsonSchema } from "./tooling";
 
 export async function* openAiChatCompletion(
-  settings: RetortSettings,
-  messagePromises: (RetortMessage | Promise<RetortMessage>)[]
+  settings: RetortSettings & Partial<RetortParamaterization<any>>,
+  messagePromises: Promise<RetortMessage>[]
 ) {
   const openai = new OpenAI({
     apiKey: process.env["OPENAI_API_KEY"],
@@ -20,10 +22,12 @@ export async function* openAiChatCompletion(
     });
   }
 
-  const chatCompletion = await openai.chat.completions.create({
+
+  let body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
+
     messages: messages,
 
-    model: settings.model,
+    model: settings.model.toString(),
     frequency_penalty: undefined,
     function_call: undefined,
     functions: undefined,
@@ -43,13 +47,31 @@ export async function* openAiChatCompletion(
     stop: undefined,
     stream: true,
     temperature: settings.temperature,
-
+    stream_options: { "include_usage": true },
     tool_choice: undefined,
     tools: undefined,
     top_logprobs: undefined,
     top_p: settings.topP,
     user: undefined,
-  });
+  };
+
+  if (settings.parameters) {
+    var parameters = retortSchemaToJsonSchema(settings.parameters);
+    var tool = {
+      type: "function",
+      function: {
+        name: settings.name ?? "answer",
+        description: settings.description,
+        parameters: parameters as any,
+      }
+
+    } as OpenAI.Chat.Completions.ChatCompletionTool;
+
+    body.tools = [tool];
+    body.tool_choice = { type: "function", function: { name: tool.function.name } };
+  }
+
+  const chatCompletion = await openai.chat.completions.create(body);
 
   let content = "";
 
@@ -64,9 +86,19 @@ export async function* openAiChatCompletion(
   //     }
 
   //     return content
-
   for await (const chunk of chatCompletion) {
-    const content = chunk.choices[0]?.delta?.content || "";
-    yield content;
+    const contentDelta = chunk.choices[0]?.delta?.content
+      ??
+      ((chunk.choices[0]?.delta?.tool_calls ?? [])[0]?.function?.arguments)
+      ?? "";
+    content += contentDelta
+    yield {
+      content,
+      contentDelta,
+      completionTokens: chunk.usage?.completion_tokens,
+      promptTokens: chunk.usage?.prompt_tokens,
+      totalTokens: chunk.usage?.total_tokens,
+      chunk
+    };
   }
 }

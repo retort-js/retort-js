@@ -1,52 +1,54 @@
 import { RetortSettings, RetortRole } from "./agent";
+import { claudeChatCompletion } from "./claude-chat-completion";
 import { RetortConversation } from "./conversation";
 import { logMessage } from "./log-message";
-import { RetortMessage } from "./message";
+import { RetortMessage, RetortMessagePromise } from "./message";
 import { openAiChatCompletion } from "./openai-chat-completion";
-import teeAsync from "./tee-async";
+import { RetortObjectSchema, RetortSchemaToType } from "./tooling";
 
-export interface RetortMessagePromise extends Promise<RetortMessage> {
-  stream: AsyncGenerator<string, void, unknown>;
+
+
+export interface RetortParamaterization<T extends RetortObjectSchema | undefined> {
+  name?: string;
+  description?: string;
+  parameters: T;
 }
+
+// If the user specifies parameters, we return a RetortJsonMessage. Otherwise, we return a RetortMessage.
+type MapToSchemaType<T extends RetortObjectSchema | undefined> = T extends RetortObjectSchema ? RetortSchemaToType<T> : string;
 
 export function defineGeneration(
   conversation: RetortConversation,
   role: RetortRole,
   push: boolean
-) {
+): <T extends RetortObjectSchema | undefined = undefined>(generationSettings?: Partial<RetortSettings> & (RetortParamaterization<T> | {})) => RetortMessagePromise<MapToSchemaType<T>> {
   return function generation(generationSettings?: Partial<RetortSettings>) {
-    let streams = conversation.messagePromises.slice(0);
-
-    let streamGenerator = teeAsync(
-      openAiChatCompletion(conversation.settings, streams)
-    );
-
-    let internalStream = streamGenerator[0];
-    let exposedStream = streamGenerator[1];
+    let settings = { ...conversation.settings, ...generationSettings }
+    let promises = conversation.messages.map((message) => message.promise);
 
 
-    async function messagePromise() {
-      let content = "";
-      for await (const chunk of internalStream) {
-        content += chunk; 
-      }
 
-      let message = new RetortMessage({ role, content });
-      return message;
+    if (settings?.model?.startsWith("claude-")) {
+      var stream = claudeChatCompletion(settings, promises);
+    }
+    else {
+      // Default to OpenAI.
+      stream = openAiChatCompletion(settings, promises);
     }
 
-    let promise = messagePromise() as RetortMessagePromise;
 
-    promise.stream = exposedStream;
+
+    let retortMessage = new RetortMessage({ stream, role, json: !!("parameters" in settings && settings.parameters) })
+
 
     if (push) {
-      conversation.messagePromises.push(promise);
+      conversation.messages.push(retortMessage);
     }
 
-    promise.then((message) => {
+    retortMessage.promise.then((message) => {
       logMessage(message);
     });
 
-    return promise;
-  };
+    return retortMessage.promise;
+  } as any;
 }

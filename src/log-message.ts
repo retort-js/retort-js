@@ -17,7 +17,12 @@ export function logMessage(message: RetortMessage) {
   }
   const resetColor = "\x1b[0m";
   const contentColor = "\x1b[37m"; // White
+  const commentColor = "\x1b[90m"; // Gray
+  let tokenComment = "";
+  if (message.promptTokens && message.completionTokens && message.totalTokens) {
+    tokenComment = ` ${commentColor}// ${message.promptTokens} prompt tokens, ${message.completionTokens} completion tokens, ${message.totalTokens} total tokens`;
+  }
   console.log(
-    `\n${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${resetColor}`
+    `\n$.${color}${message.role}${resetColor} ${contentColor}\`${message.content}\`${tokenComment}${resetColor}`
   );
 }
