@@ -260,7 +260,7 @@ export function isTemplateStringsArray(
 export function unescape(str: string) {
   let segments = str
     .split(
-      /(\\\x[a-fA-F0-9]{2}|\\\u[a-fA-F0-9]{4}|\\\u\{[a-fA-F0-9]{1,6}\}|\\.)/g
+      /(\\x[a-fA-F0-9]{2}|\\u[a-fA-F0-9]{4}|\\u\{[a-fA-F0-9]{1,6}\}|\\.)/g
     )
     .filter((x) => x);
   return segments.map(unescapeSegment).join("");

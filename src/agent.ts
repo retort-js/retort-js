@@ -64,6 +64,7 @@ export interface RetortSettings {
   temperature: number;
   topP: number;
   maxTokens?: number;
+  stream?: boolean;
 }
 
 export interface RetortInputSettings extends RetortSettings {

@@ -22,83 +22,46 @@ export async function* openAiChatCompletion(
     });
   }
 
-
-  let body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
-
-    messages: messages,
-
+  const commonOptions = {
     model: settings.model.toString(),
-    frequency_penalty: undefined,
-    function_call: undefined,
-    functions: undefined,
-    logit_bias: undefined,
-
-    logprobs: undefined,
-    max_tokens: undefined,
-
-    n: undefined,
-
-    presence_penalty: undefined,
-
-    response_format: undefined,
-
-    seed: undefined,
-
-    stop: undefined,
-    stream: true,
+    messages,
     temperature: settings.temperature,
-    stream_options: { "include_usage": true },
-    tool_choice: undefined,
-    tools: undefined,
-    top_logprobs: undefined,
+    max_tokens: settings.maxTokens,
     top_p: settings.topP,
-    user: undefined,
   };
 
-  if (settings.parameters) {
-    var parameters = retortSchemaToJsonSchema(settings.parameters);
-    var tool = {
-      type: "function",
-      function: {
-        name: settings.name ?? "answer",
-        description: settings.description,
-        parameters: parameters as any,
-      }
+  // Default to streaming if not specified
+  if (settings.stream !== false) {
+    const stream = await openai.chat.completions.create({
+      ...commonOptions,
+      stream: true,
+    });
 
-    } as OpenAI.Chat.Completions.ChatCompletionTool;
-
-    body.tools = [tool];
-    body.tool_choice = { type: "function", function: { name: tool.function.name } };
-  }
-
-  const chatCompletion = await openai.chat.completions.create(body);
-
-  let content = "";
-
-  //     if (!chatCompletion.choices[0]) {
-  //         throw new Error('OpenAI returned no choices');
-  //     }
-
-  //     let content = chatCompletion.choices[0].message.content;
-
-  //     if (content === null || content === undefined) {
-  //         throw new Error('OpenAI returned null or undefined content');
-  //     }
-
-  //     return content
-  for await (const chunk of chatCompletion) {
-    const contentDelta = chunk.choices[0]?.delta?.content
-      ??
-      ((chunk.choices[0]?.delta?.tool_calls ?? [])[0]?.function?.arguments)
-      ?? "";
-    content += contentDelta
+    let content = "";
+    for await (const part of stream) {
+      const contentDelta = part.choices[0]?.delta?.content || "";
+      content += contentDelta;
+      yield {
+        content,
+        contentDelta,
+        promptTokens: part.usage?.prompt_tokens,
+        completionTokens: part.usage?.completion_tokens,
+        totalTokens: part.usage?.total_tokens,
+      };
+    }
+  } else {
+    const response = await openai.chat.completions.create({
+      ...commonOptions,
+      stream: false,
+    });
+    
+    const content = response.choices[0]?.message?.content || "";
     yield {
       content,
-      contentDelta,
-      completionTokens: chunk.usage?.completion_tokens,
-      promptTokens: chunk.usage?.prompt_tokens,
-      totalTokens: chunk.usage?.total_tokens,
-      chunk
+      contentDelta: content,
+      promptTokens: response.usage?.prompt_tokens,
+      completionTokens: response.usage?.completion_tokens,
+      totalTokens: response.usage?.total_tokens,
     };
   }
 }
