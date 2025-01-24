@@ -34,8 +34,8 @@ export async function* claudeChatCompletion(
     system,
   };
 
-  // Default to streaming if not specified
-  if (settings.stream !== false) {
+  // Only stream if explicitly set to true
+  if (settings.stream === true) {
     const stream = anthropic.messages.stream(commonOptions);
     let content = "";
     for await (const chunk of stream) {

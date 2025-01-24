@@ -14,12 +14,12 @@ describe("Chat Completions", () => {
 
   describe("Claude", () => {
     const settings: RetortSettings = {
-      model: "claude-3-haiku-20240307",
+      model: "claude-3-5-haiku-latest",
       temperature: 0,
       topP: 1
     };
 
-    it("should work with streaming", async () => {
+    it("should work with explicit streaming", async () => {
       const completion = claudeChatCompletion({ ...settings, stream: true }, messages);
       let lastChunk;
       for await (const chunk of completion) {
@@ -28,8 +28,8 @@ describe("Chat Completions", () => {
       expect(lastChunk?.content.trim()).toBe("4");
     });
 
-    it("should work without streaming", async () => {
-      const completion = claudeChatCompletion({ ...settings, stream: false }, messages);
+    it("should work with default non-streaming", async () => {
+      const completion = claudeChatCompletion({ ...settings }, messages);
       let lastChunk;
       for await (const chunk of completion) {
         lastChunk = chunk;
@@ -40,12 +40,12 @@ describe("Chat Completions", () => {
 
   describe("OpenAI", () => {
     const settings: RetortSettings = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       temperature: 0,
       topP: 1
     };
 
-    it("should work with streaming", async () => {
+    it("should work with explicit streaming", async () => {
       const completion = openAiChatCompletion({ ...settings, stream: true }, messages);
       let lastChunk;
       for await (const chunk of completion) {
@@ -54,8 +54,8 @@ describe("Chat Completions", () => {
       expect(lastChunk?.content.trim()).toBe("4");
     });
 
-    it("should work without streaming", async () => {
-      const completion = openAiChatCompletion({ ...settings, stream: false }, messages);
+    it("should work with default non-streaming", async () => {
+      const completion = openAiChatCompletion({ ...settings }, messages);
       let lastChunk;
       for await (const chunk of completion) {
         lastChunk = chunk;

@@ -30,8 +30,8 @@ export async function* openAiChatCompletion(
     top_p: settings.topP,
   };
 
-  // Default to streaming if not specified
-  if (settings.stream !== false) {
+  // Only stream if explicitly set to true
+  if (settings.stream === true) {
     const stream = await openai.chat.completions.create({
       ...commonOptions,
       stream: true,
